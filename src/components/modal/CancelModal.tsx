@@ -13,7 +13,7 @@ function CancelModal({ handleClose, selectedId, isOpen }: IModalProps) {
     const nodeRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        const handleKeyPress = (event: KeyboardEvent) => {
+        const handleKeyPress = (event: KeyboardEvent): void => {
             if (event.key === "Escape") {
                 handleClose(false);
             }
@@ -24,7 +24,7 @@ function CancelModal({ handleClose, selectedId, isOpen }: IModalProps) {
         return () => {
             document.removeEventListener("keydown", handleKeyPress);
         };
-    }, []);
+    }, [handleClose]);
 
     return (
         <Portal>
