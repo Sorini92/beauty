@@ -13,7 +13,6 @@ const useAppointmentService = () => {
 
     const getAllAppointments = async (): Promise<IAppointment[]> => {
         const res = await request({ url: _apiBase });
-
         if (res.every((item: IAppointment) => hasRequiredFields(item, requiredFields))) {
             return res;
         } else {
@@ -36,14 +35,22 @@ const useAppointmentService = () => {
                     phone: item.phone,
                 };
             });
-
         return transformed;
+    };
+
+    const cancelOneAppointment = async (id: number) => {
+        return await request({
+            url: `${_apiBase}/${id}`,
+            method: "PATCH",
+            body: JSON.stringify({ canceled: true }),
+        });
     };
 
     return {
         loadingStatus,
         getAllAppointments,
         getAllActiveAppointments,
+        cancelOneAppointment,
     };
 };
 

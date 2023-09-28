@@ -23,17 +23,13 @@ function AppointmentList() {
         selectId(id);
     }, []);
 
-    const elements = activeAppointments.map((item) => {
-        return <AppointmentItem {...item} key={item.id} openModal={handleOpenModal} />;
-    });
-
     if (appointmentLoadingStatus === "loading") {
         return <Spinner />;
     } else if (appointmentLoadingStatus === "error") {
         return (
             <>
                 <Error />
-                <button onClick={getActiveAppointments} className="schedule__reload">
+                <button className="schedule__reload" onClick={getActiveAppointments}>
                     Try to reload
                 </button>
             </>
@@ -42,7 +38,16 @@ function AppointmentList() {
 
     return (
         <>
-            {elements}
+            {activeAppointments.map((item) => {
+                return (
+                    <AppointmentItem
+                        {...item}
+                        key={item.id}
+                        openModal={handleOpenModal}
+                        getActiveAppointments={getActiveAppointments}
+                    />
+                );
+            })}
             <CancelModal handleClose={setIsOpen} selectedId={selectedId} isOpen={isOpen} />
         </>
     );

@@ -1,28 +1,46 @@
-import { useState, useEffect, memo } from "react";
+import { useEffect, useState, memo } from "react";
+import "./appointmentItem.scss";
 import dayjs from "dayjs";
 import { Optional } from "utility-types";
 
-import "./appointmentItem.scss";
-
 import { IAppointment } from "../../shared/interfaces/appointment.interface";
 
-//type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>
 type AppointmentProps = Optional<IAppointment, "canceled"> & {
     openModal: (state: number) => void;
+    getActiveAppointments?: () => void;
 };
 
 const AppointmentItem = memo(
-    ({ id, name, date, service, phone, canceled, openModal }: AppointmentProps) => {
+    ({
+        id,
+        name,
+        date,
+        service,
+        phone,
+        canceled,
+        openModal,
+        getActiveAppointments,
+    }: AppointmentProps) => {
         const [timeLeft, changeTimeLeft] = useState<string | null>(null);
 
         useEffect(() => {
-            let hoursLeft = dayjs(date).diff(undefined, "h");
-            let minutesLeft = dayjs(date).diff(undefined, "m") % 60;
-
-            changeTimeLeft(`${hoursLeft}:${minutesLeft}`);
+            changeTimeLeft(
+                `${dayjs(date).diff(undefined, "h")}:${dayjs(date).diff(undefined, "m") % 60}`
+            );
 
             const intervalId = setInterval(() => {
-                changeTimeLeft(`${hoursLeft}:${minutesLeft}`);
+                if (dayjs(date).diff(undefined, "m") <= 0) {
+                    if (getActiveAppointments) {
+                        getActiveAppointments();
+                    }
+                    clearInterval(intervalId);
+                } else {
+                    changeTimeLeft(
+                        `${dayjs(date).diff(undefined, "h")}:${
+                            dayjs(date).diff(undefined, "m") % 60
+                        }`
+                    );
+                }
             }, 60000);
 
             return () => {
@@ -32,6 +50,7 @@ const AppointmentItem = memo(
 
         const formattedDate = dayjs(date).format("DD/MM/YYYY HH:mm");
 
+        //const number = Number(timeLeft?.split(":")[0]) * 24 * 24 * 60 * 60 + Number(timeLeft?.split(":")[1]) * 24 * 60 * 60;
         return (
             <div className="appointment">
                 <div className="appointment__info">
@@ -46,7 +65,12 @@ const AppointmentItem = memo(
                             <span>Time left:</span>
                             <span className="appointment__timer">{timeLeft}</span>
                         </div>
-                        <button className="appointment__cancel" onClick={() => openModal(id)}>
+                        <button
+                            className="appointment__cancel"
+                            onClick={() => {
+                                openModal(id);
+                            }}
+                        >
                             Cancel
                         </button>
                     </>
