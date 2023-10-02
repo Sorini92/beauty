@@ -6,7 +6,7 @@ import { Optional } from "utility-types";
 import { IAppointment } from "../../shared/interfaces/appointment.interface";
 
 type AppointmentProps = Optional<IAppointment, "canceled"> & {
-    openModal: (state: number) => void;
+    openModal?: (state: number) => void;
     getActiveAppointments?: () => void;
 };
 
@@ -50,7 +50,6 @@ const AppointmentItem = memo(
 
         const formattedDate = dayjs(date).format("DD/MM/YYYY HH:mm");
 
-        //const number = Number(timeLeft?.split(":")[0]) * 24 * 24 * 60 * 60 + Number(timeLeft?.split(":")[1]) * 24 * 60 * 60;
         return (
             <div className="appointment">
                 <div className="appointment__info">
@@ -59,7 +58,7 @@ const AppointmentItem = memo(
                     <span className="appointment__service">Service: {service}</span>
                     <span className="appointment__phone">Phone: {phone}</span>
                 </div>
-                {!canceled ? (
+                {!canceled && openModal ? (
                     <>
                         <div className="appointment__time">
                             <span>Time left:</span>
@@ -67,9 +66,7 @@ const AppointmentItem = memo(
                         </div>
                         <button
                             className="appointment__cancel"
-                            onClick={() => {
-                                openModal(id);
-                            }}
+                            onClick={() => (openModal ? openModal(id) : null)}
                         >
                             Cancel
                         </button>

@@ -1,22 +1,39 @@
 import { useContext, useEffect } from "react";
 import AppointmentItem from "../appointmentItem.tsx/AppointmentItem";
+import Spinner from "../spinner/Spinner";
+import Error from "../error/Error";
 import { AppointmentContext } from "../../context/appointments/AppointmentsContext";
 
 function HistoryList() {
-    const { allAppointments, getAppointments } = useContext(AppointmentContext);
+    const { allAppointments, getAppointments, appointmentLoadingStatus } =
+        useContext(AppointmentContext);
 
     useEffect(() => {
         getAppointments();
     }, []);
 
-    const elements = allAppointments.map((item) => {
+    if (appointmentLoadingStatus === "loading") {
+        return <Spinner />;
+    } else if (appointmentLoadingStatus === "error") {
         return (
-            //<AppointmentItem {...item} key={item.id} openModal={setIsOpen} />
-            <div></div>
+            <>
+                <Error />
+                <button className="schedule__reload" onClick={getAppointments}>
+                    Try to reload
+                </button>
+            </>
         );
-    });
+    }
 
-    return <>{elements}</>;
+    return (
+        <>
+            {allAppointments
+                .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                .map((item) => (
+                    <AppointmentItem {...item} key={item.id} />
+                ))}
+        </>
+    );
 }
 
 export default HistoryList;
