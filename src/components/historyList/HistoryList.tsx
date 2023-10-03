@@ -5,12 +5,22 @@ import Error from "../error/Error";
 import { AppointmentContext } from "../../context/appointments/AppointmentsContext";
 
 function HistoryList() {
-    const { allAppointments, getAppointments, appointmentLoadingStatus } =
-        useContext(AppointmentContext);
+    const {
+        allAppointments,
+        getAppointments,
+        appointmentLoadingStatus,
+        calendarDate,
+        setDateAndFilter,
+    } = useContext(AppointmentContext);
+
+    useEffect(() => {
+        setDateAndFilter([null, null]);
+    }, []);
 
     useEffect(() => {
         getAppointments();
-    }, []);
+        // eslint-disable-next-line
+    }, [calendarDate]);
 
     if (appointmentLoadingStatus === "loading") {
         return <Spinner />;
@@ -27,11 +37,13 @@ function HistoryList() {
 
     return (
         <>
-            {allAppointments
-                .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-                .map((item) => (
-                    <AppointmentItem {...item} key={item.id} />
-                ))}
+            {allAppointments.length > 0 ? (
+                allAppointments
+                    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                    .map((item) => <AppointmentItem {...item} key={item.id} />)
+            ) : (
+                <div className="empty">No appointment in this time range</div>
+            )}
         </>
     );
 }

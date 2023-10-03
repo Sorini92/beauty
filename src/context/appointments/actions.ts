@@ -1,3 +1,4 @@
+import { LooseValue } from "react-calendar/dist/cjs/shared/types";
 import { IAppointment, ActiveAppointment } from "../../shared/interfaces/appointment.interface";
 
 export enum ActionsTypes {
@@ -5,6 +6,7 @@ export enum ActionsTypes {
     SET_ALL_APPOINTMENTS = "SET_ALL_APPOINTMENTS",
     FETCHING_APPOINTMENTS = "FETCHING_APPOINTMENTS",
     ERROR_FETCHING_APPOINTMENTS = "ERROR_FETCHING_APPOINTMENTS",
+    SET_CALENDAR_DATE = "SET_CALENDAR_DATE",
 }
 
 export type AppointmentAction =
@@ -21,4 +23,8 @@ export type AppointmentAction =
       }
     | {
           type: ActionsTypes.FETCHING_APPOINTMENTS;
+      }
+    | {
+          type: ActionsTypes.SET_CALENDAR_DATE;
+          payload: LooseValue;
       };

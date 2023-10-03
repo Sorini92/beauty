@@ -7,16 +7,29 @@ import CancelModal from "../modal/CancelModal";
 
 import { AppointmentContext } from "../../context/appointments/AppointmentsContext";
 
+import "./appointmentList.scss";
+
 function AppointmentList() {
-    const { activeAppointments, getActiveAppointments, appointmentLoadingStatus } =
-        useContext(AppointmentContext);
+    const {
+        activeAppointments,
+        getActiveAppointments,
+        appointmentLoadingStatus,
+        calendarDate,
+        setDateAndFilter,
+    } = useContext(AppointmentContext);
 
     const [isOpen, setIsOpen] = useState(false);
     const [selectedId, selectId] = useState(0);
 
     useEffect(() => {
-        getActiveAppointments();
+        setDateAndFilter([null, null]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    useEffect(() => {
+        getActiveAppointments();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [calendarDate]);
 
     const handleOpenModal = useCallback((id: number) => {
         setIsOpen(true);
@@ -38,16 +51,20 @@ function AppointmentList() {
 
     return (
         <>
-            {activeAppointments.map((item) => {
-                return (
-                    <AppointmentItem
-                        {...item}
-                        key={item.id}
-                        openModal={handleOpenModal}
-                        getActiveAppointments={getActiveAppointments}
-                    />
-                );
-            })}
+            {activeAppointments.length > 0 ? (
+                activeAppointments.map((item) => {
+                    return (
+                        <AppointmentItem
+                            {...item}
+                            key={item.id}
+                            openModal={handleOpenModal}
+                            getActiveAppointments={getActiveAppointments}
+                        />
+                    );
+                })
+            ) : (
+                <div className="empty">No appointment in this time range</div>
+            )}
             <CancelModal handleClose={setIsOpen} selectedId={selectedId} isOpen={isOpen} />
         </>
     );

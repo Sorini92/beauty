@@ -47,3 +47,28 @@ html {
 body {
 	position: relative;
 }
+
+.empty {
+    margin-top: 100px;
+    text-align: center;
+    color: red;
+    font-size: 25px;
+	width: 500px;
+}
+
+.clearFilter {
+	margin-top: 10px;
+	width: 100%;
+	height: 30px;
+	background: #EBBBAB;
+	border-radius: 5px;
+	cursor: pointer;
+	border: 1px solid grey;
+	&:hover {
+		opacity: .8;
+	}
+	&:disabled {
+		opacity: .5;
+		color: black;
+	}
+}
