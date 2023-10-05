@@ -12,7 +12,11 @@ function Calendar() {
         <div className="calendar">
             <LibCalendar
                 onChange={(value) => setDateAndFilter(value)}
-                value={calendarDate}
+                value={
+                    Array.isArray(calendarDate) && calendarDate[0] && calendarDate[1]
+                        ? calendarDate
+                        : ["", ""]
+                }
                 selectRange
             />
             <button

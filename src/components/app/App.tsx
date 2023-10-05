@@ -1,9 +1,11 @@
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import UserContextProvider from "../../context/user/userContext";
+import AppointmentContextProvider from "../../context/appointments/AppointmentsContext";
 import Header from "../header/Header";
 import SchedulePage from "../../pages/schedule/SchedulePage";
-import AppointmentContextProvider from "../../context/appointments/AppointmentsContext";
 import HistoryPage from "../../pages/history/HistoryPage";
 import PageNotFound from "../../pages/404/404";
+import LoginPage from "../../pages/login/login";
 
 import "./app.scss";
 
@@ -25,6 +27,10 @@ const router = createBrowserRouter([
                 path: "/history",
                 element: <HistoryPage />,
             },
+            {
+                path: "/login",
+                element: <LoginPage />,
+            },
         ],
     },
 ]);
@@ -35,12 +41,14 @@ function App() {
 
 function Root() {
     return (
-        <main className="board">
-            <Header />
+        <UserContextProvider>
             <AppointmentContextProvider>
-                <Outlet />
+                <main className="board">
+                    <Header />
+                    <Outlet />
+                </main>
             </AppointmentContextProvider>
-        </main>
+        </UserContextProvider>
     );
 }
 

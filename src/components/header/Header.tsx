@@ -1,12 +1,16 @@
-import { useState, useEffect } from "react";
-import { NavLink, Link, useLocation } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
+import { UserContext } from "../../context/user/userContext";
+import { NavLink, Link, useLocation, useNavigate } from "react-router-dom";
 
 import "./header.scss";
 
 function Header() {
+    const { setAuth, name } = useContext(UserContext);
+
     const [active, setActive] = useState<boolean>(false);
 
     const location = useLocation();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const isHomePage = location.pathname === "/";
@@ -14,6 +18,17 @@ function Header() {
         setActive(isHomePage);
         // eslint-disable-next-line
     }, [location]);
+
+    const logOut = () => {
+        setAuth({ name: "", token: "" });
+
+        localStorage.removeItem("beautyAdminAccessToken");
+        localStorage.removeItem("beautyAdminLogin");
+
+        navigate("/login");
+    };
+
+    if (!name) return null;
 
     return (
         <header className="header">
@@ -42,6 +57,13 @@ function Header() {
                     </li>
                 </ul>
             </nav>
+
+            <div className="header__logout">
+                <div className="header__logout-name">{name}</div>
+                <button className="header__logout-btn" onClick={() => logOut()}>
+                    logout
+                </button>
+            </div>
         </header>
     );
 }

@@ -8,3 +8,13 @@ export interface IAppointment {
 }
 
 export type ActiveAppointment = Omit<IAppointment, "canceled">;
+
+export interface IUser {
+    name: string;
+    password: string;
+    token: string;
+}
+
+export type ISignInUserData = Omit<IUser, "token">;
+
+export type ICheckUserData = Omit<IUser, "password">;
