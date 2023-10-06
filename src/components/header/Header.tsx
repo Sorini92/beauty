@@ -3,11 +3,13 @@ import { UserContext } from "../../context/user/userContext";
 import { NavLink, Link, useLocation, useNavigate } from "react-router-dom";
 
 import "./header.scss";
+import AddNewManager from "../addNewManager/AddNewManager";
 
 function Header() {
     const { setAuth, name } = useContext(UserContext);
 
     const [active, setActive] = useState<boolean>(false);
+    const [isOpen, setIsOpen] = useState<boolean>(false);
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -63,6 +65,12 @@ function Header() {
                 <button className="header__logout-btn" onClick={() => logOut()}>
                     logout
                 </button>
+                {name === "admin" ? (
+                    <button className="header__logout-adminBtn" onClick={() => setIsOpen(true)}>
+                        Add manager
+                    </button>
+                ) : null}
+                <AddNewManager setIsOpen={setIsOpen} isOpen={isOpen} />
             </div>
         </header>
     );

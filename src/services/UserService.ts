@@ -19,8 +19,18 @@ const useUserService = () => {
         return res[0];
     };
 
+    const addUser = async (user: ISignInUserData): Promise<string | null> => {
+        let userObj = { ...user, id: new Date().getTime(), token: new Date().getTime() };
+        return await request({
+            url: _apiBase,
+            method: "POST",
+            body: JSON.stringify(userObj),
+        });
+    };
+
     return {
         getUser,
+        addUser,
         checkUser,
         loadingStatus,
     };

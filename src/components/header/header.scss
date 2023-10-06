@@ -72,5 +72,23 @@
 				background-color: $inputs;
 			}
 		}
+		&-adminBtn {
+			margin-top: 10px;
+			width: 100px;
+			height: 25px;
+			display: block;
+			border: 1px solid rgba(0, 0, 0, 0.4);
+			border-radius: 24px;
+			cursor: pointer;
+			background-color: #fff;
+			font-weight: 600;
+			font-size: 12px;
+			line-height: 20px;
+			color: rgba(0, 0, 0, 0.7);
+			transition: 0.3s all;
+			&:hover {
+				background-color: $inputs;
+			}
+		}
 	}
 }
