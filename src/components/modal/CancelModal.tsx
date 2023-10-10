@@ -1,31 +1,28 @@
 import Portal from "../portal/portal";
-import { useRef, useEffect, useState, useContext } from "react";
+import { useRef, useEffect, useState } from "react";
 import { CSSTransition } from "react-transition-group";
-import { AppointmentContext } from "../../context/appointments/AppointmentsContext";
 import "./modal.scss";
-import useAppointmentService from "../../services/AppointmentService";
 
 interface IModalProps {
     handleClose: (state: boolean) => void;
+    getList: () => void;
+    cencelFunc: (id: number) => Promise<void>;
     selectedId: number;
     isOpen: boolean;
+    title: string;
 }
 
-function CancelModal({ handleClose, selectedId, isOpen }: IModalProps) {
-    const { getActiveAppointments } = useContext(AppointmentContext);
-
-    const { cancelOneAppointment } = useAppointmentService();
-
+function CancelModal({ handleClose, selectedId, isOpen, title, getList, cencelFunc }: IModalProps) {
     const [btnDisabled, setBtnDisbled] = useState<boolean>(false);
     const [cancelStatus, setCancelStatus] = useState<boolean | null>(null);
 
     const nodeRef = useRef<HTMLDivElement>(null);
     const cancelStatusRef = useRef<boolean | null>(null);
 
-    const handleCancelAppointment = (id: number) => {
+    const handleCancel = (id: number) => {
         setBtnDisbled(true);
 
-        cancelOneAppointment(id)
+        cencelFunc(id)
             .then(() => {
                 setCancelStatus(true);
             })
@@ -38,7 +35,7 @@ function CancelModal({ handleClose, selectedId, isOpen }: IModalProps) {
     const closeModal = () => {
         handleClose(false);
         if (cancelStatus || cancelStatusRef.current) {
-            getActiveAppointments();
+            getList();
         }
     };
 
@@ -72,13 +69,13 @@ function CancelModal({ handleClose, selectedId, isOpen }: IModalProps) {
                 <div className="modal" ref={nodeRef}>
                     <div className="modal__body">
                         <span className="modal__title">
-                            Are you sure you want to delete the appointment? #{selectedId}
+                            {title} #{selectedId}
                         </span>
                         <div className="modal__btns">
                             <button
                                 className="modal__ok"
                                 disabled={btnDisabled}
-                                onClick={() => handleCancelAppointment(selectedId)}
+                                onClick={() => handleCancel(selectedId)}
                             >
                                 Ok
                             </button>

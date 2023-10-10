@@ -1,24 +1,32 @@
-import { ChangeEvent, FormEvent, useState, useContext } from "react";
+import { ChangeEvent, FormEvent, useState, useContext, useEffect } from "react";
 import useAppointmentService from "../../services/AppointmentService";
 import { AppointmentContext } from "../../context/appointments/AppointmentsContext";
 
-import { IAppointment } from "../../shared/interfaces/appointment.interface";
+import { IAppointment, ISpecialist } from "../../shared/interfaces/appointment.interface";
 
 import "./caform.scss";
 
 function CAForm() {
-    const { createNewAppointment } = useAppointmentService();
+    const { createNewAppointment, getSpecialists } = useAppointmentService();
     const { getActiveAppointments } = useContext(AppointmentContext);
 
     const [formData, setFormData] = useState<IAppointment>({
         name: "",
         service: "",
-        phone: "",
+        phone: 0,
         date: "",
+        specialist: "",
         canceled: false,
         id: 0,
     });
-    const [creatinonStatus, setCreationStatus] = useState<boolean>(false);
+    const [creationStatus, setCreationStatus] = useState<boolean>(false);
+    const [specialists, setSpecialists] = useState<ISpecialist[]>([]);
+
+    useEffect(() => {
+        getSpecialists().then((res) => {
+            setSpecialists(res);
+        });
+    }, []);
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -30,8 +38,9 @@ function CAForm() {
                 setFormData({
                     name: "",
                     service: "",
-                    phone: "",
+                    phone: 0,
                     date: "",
+                    specialist: "",
                     canceled: false,
                     id: 0,
                 });
@@ -42,13 +51,23 @@ function CAForm() {
             });
     };
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
 
         setFormData((prevData) => ({
             ...prevData,
             [name]: value,
         }));
+    };
+
+    const renderSpecialists = () => {
+        return specialists.map((item) => {
+            return (
+                <option key={item.id} value={item.name}>
+                    {item.name}
+                </option>
+            );
+        });
     };
 
     return (
@@ -80,6 +99,23 @@ function CAForm() {
                 onChange={handleChange}
             />
 
+            <label htmlFor="specialist">
+                Specialist<span>*</span>
+            </label>
+            <select
+                required
+                id="specialist"
+                name="specialist"
+                placeholder="Specialist name"
+                value={formData.specialist}
+                onChange={handleChange}
+            >
+                <option disabled value="">
+                    Specialist name
+                </option>
+                {renderSpecialists()}
+            </select>
+
             <label htmlFor="phone">
                 Phone number<span>*</span>
             </label>
@@ -87,11 +123,11 @@ function CAForm() {
                 type="tel"
                 name="phone"
                 id="phone"
-                placeholder="+1 890 335 372"
-                pattern="^\++[0-9]{1} [0-9]{3} [0-9]{3} [0-9]{3}"
-                title="Format should be +1 804 944 567"
+                placeholder="380683357256"
+                pattern="\d{12}"
+                title="Format should be 380683357256"
                 required
-                value={formData.phone}
+                value={formData.phone === 0 ? "" : formData.phone}
                 onChange={handleChange}
             />
 
@@ -109,7 +145,7 @@ function CAForm() {
                 value={formData.date}
                 onChange={handleChange}
             />
-            <button disabled={creatinonStatus}>Create</button>
+            <button disabled={creationStatus}>Create</button>
         </form>
     );
 }

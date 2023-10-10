@@ -1,9 +1,11 @@
+import { Link } from "react-router-dom";
 import { useEffect, useState, memo } from "react";
-import "./appointmentItem.scss";
 import dayjs from "dayjs";
 import { Optional } from "utility-types";
 
 import { IAppointment } from "../../shared/interfaces/appointment.interface";
+
+import "./appointmentItem.scss";
 
 type AppointmentProps = Optional<IAppointment, "canceled"> & {
     openModal?: (state: number) => void;
@@ -17,6 +19,7 @@ const AppointmentItem = memo(
         date,
         service,
         phone,
+        specialist,
         canceled,
         openModal,
         getActiveAppointments,
@@ -57,6 +60,7 @@ const AppointmentItem = memo(
                     <span className="appointment__name">Name: {name}</span>
                     <span className="appointment__service">Service: {service}</span>
                     <span className="appointment__phone">Phone: {phone}</span>
+                    <span className="appointment__specialist">Specialist: {specialist}</span>
                 </div>
                 {!canceled && openModal ? (
                     <>
@@ -64,6 +68,11 @@ const AppointmentItem = memo(
                             <span>Time left:</span>
                             <span className="appointment__timer">{timeLeft}</span>
                         </div>
+
+                        <Link to={`customers/${phone}`} className="appointment__personal">
+                            Personal Page
+                        </Link>
+
                         <button
                             className="appointment__cancel"
                             onClick={() => (openModal ? openModal(id) : null)}

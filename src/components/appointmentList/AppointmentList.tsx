@@ -4,6 +4,7 @@ import AppointmentItem from "../appointmentItem.tsx/AppointmentItem";
 import Spinner from "../spinner/Spinner";
 import Error from "../error/Error";
 import CancelModal from "../modal/CancelModal";
+import useAppointmentService from "../../services/AppointmentService";
 
 import { AppointmentContext } from "../../context/appointments/AppointmentsContext";
 
@@ -17,6 +18,7 @@ function AppointmentList() {
         calendarDate,
         setDateAndFilter,
     } = useContext(AppointmentContext);
+    const { cancelOneAppointment } = useAppointmentService();
 
     const [isOpen, setIsOpen] = useState(false);
     const [selectedId, selectId] = useState(0);
@@ -65,7 +67,14 @@ function AppointmentList() {
             ) : (
                 <div className="empty">No appointment in this time range</div>
             )}
-            <CancelModal handleClose={setIsOpen} selectedId={selectedId} isOpen={isOpen} />
+            <CancelModal
+                title={"Are you sure you want to delete the appointment?"}
+                handleClose={setIsOpen}
+                selectedId={selectedId}
+                isOpen={isOpen}
+                getList={getActiveAppointments}
+                cencelFunc={cancelOneAppointment}
+            />
         </>
     );
 }

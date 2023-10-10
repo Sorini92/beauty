@@ -3,7 +3,8 @@ export interface IAppointment {
     date: string;
     name: string;
     service: string;
-    phone: string;
+    phone: number;
+    specialist: string;
     canceled: boolean;
 }
 
@@ -16,5 +17,19 @@ export interface IUser {
 }
 
 export type ISignInUserData = Omit<IUser, "token">;
-
 export type ICheckUserData = Omit<IUser, "password">;
+
+export interface ISpecialist {
+    id: number;
+    name: string;
+    phone: string;
+    services: string[];
+}
+
+export interface ICustomer {
+    name: string;
+    phone: number;
+    age: number | string;
+    email: string;
+    id: number;
+}

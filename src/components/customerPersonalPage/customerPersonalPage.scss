@@ -1,0 +1,122 @@
+@import "../../style/variables.scss";
+
+.personal {
+    background-color: #fff;
+    margin-top: 70px;
+    height: 573px;
+    box-shadow: 5px 5px 15px 0px rgba(0, 0, 0, 0.25);
+    &__title {
+        padding-top: 25px;
+        text-align: center;
+        color: rgba(0, 0, 0, 0.70);
+        font-size: 20px;
+    }
+    &__wrapper {
+        padding: 50px 30px;
+        display: grid;
+        grid-template-columns: 300px 400px;
+        column-gap: 100px;
+        
+    }
+    &__information {
+        &-form {
+            position: relative;
+            div {
+                display: flex;
+                align-items: center;
+                margin: 15px 0;
+                max-height: 20px;
+                input {
+                    height: 20px;
+                    margin-left: 5px;
+                }
+            }
+        }
+        &-confirm {
+            position: absolute;
+            right: 80px;
+            bottom: -120px;
+            width: 100px;
+            height: 30px;
+            border: 1px solid rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+            background-color: #fff;
+            color: black;
+            transition: 0.3s all;
+            box-shadow: 1px 3px 3px rgb(161, 161, 161);
+            &:hover {
+                background-color: $inputs;
+            }
+        }
+        &-field {
+            margin: 15px 0;
+            font-size: 15px;
+        }
+        &-btns {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        &-edit {
+            width: 100px;
+            height: 30px;
+            border: 1px solid rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+            background-color: #fff;
+            color: black;
+            transition: 0.3s all;
+            box-shadow: 1px 3px 3px rgb(161, 161, 161);
+            &:hover {
+                background-color: $inputs;
+            }
+        }
+        &-back {
+            margin-top: 20px;
+            width: 100px;
+            height: 30px;
+            padding: 2px 0;
+            background: #ffffff;
+            border: 1px solid $cancel;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            line-height: 16px;
+            color: rgba(0, 0, 0, 0.7);
+            transition: 0.3s all;
+            &:hover {
+                color: #fff;
+                background-color: $cancel;
+            }
+            &:disabled {
+                color: #fff;
+                background-color: $inputs;
+                border: none;
+            }
+        }
+    }
+    &__records {
+        &-items {
+            overflow-y:scroll;
+            height: 390px;
+        }
+        &-item {
+            margin-bottom: 15px;
+            margin-right: 10px;
+            border-bottom: 1px solid black;
+        }
+        &-title {
+            text-align: center;
+            margin-bottom: 50px;
+            font-size: 15px;
+        }
+        &-service {
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+        &-wrapper {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+    }
+}

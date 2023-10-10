@@ -3,7 +3,11 @@ import hasRequiredFields from "../utils/hasRequiredFields";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 
-import { IAppointment, ActiveAppointment } from "../shared/interfaces/appointment.interface";
+import {
+    IAppointment,
+    ActiveAppointment,
+    ICustomer,
+} from "../shared/interfaces/appointment.interface";
 
 dayjs.extend(customParseFormat);
 
@@ -36,9 +40,16 @@ const useAppointmentService = () => {
                     name: item.name,
                     service: item.service,
                     phone: item.phone,
+                    specialist: item.specialist,
                 };
             });
         return transformed;
+    };
+
+    const getSpecialists = async () => {
+        const res = await request({ url: "http://localhost:3001/specialists" });
+
+        return res;
     };
 
     const cancelOneAppointment = async (id: number) => {
@@ -49,10 +60,35 @@ const useAppointmentService = () => {
         });
     };
 
+    const checkCustomer = async (phone: number): Promise<ICustomer | undefined> => {
+        let res = await request({ url: `http://localhost:3001/customers?phone=${phone}` });
+
+        return res[0];
+    };
+
     const createNewAppointment = async (body: IAppointment) => {
         const id = new Date().getTime();
         body["id"] = id;
+        body["phone"] = +body["phone"];
         body["date"] = dayjs(body.date, "DD/MM/YYYY HH:mm").format("YYYY-MM-DDTHH:mm");
+
+        checkCustomer(+body["phone"]).then((res) => {
+            if (!res) {
+                let customer: ICustomer = {
+                    name: body["name"],
+                    phone: +body["phone"],
+                    age: "no data",
+                    email: "no data",
+                    id: +body["phone"],
+                };
+
+                request({
+                    url: "http://localhost:3001/customers",
+                    method: "POST",
+                    body: JSON.stringify(customer),
+                });
+            }
+        });
 
         return await request({
             url: _apiBase,
@@ -67,6 +103,7 @@ const useAppointmentService = () => {
         getAllActiveAppointments,
         cancelOneAppointment,
         createNewAppointment,
+        getSpecialists,
     };
 };
 
