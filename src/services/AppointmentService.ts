@@ -17,6 +17,8 @@ const useAppointmentService = () => {
     const { loadingStatus, request } = useHttp();
 
     const _apiBase = "http://localhost:3001/appointments";
+    const _apiSpecialists = "http://localhost:3001/specialists";
+    const _apiCustomers = "http://localhost:3001/customers";
 
     const getAllAppointments = async (): Promise<IAppointment[]> => {
         const res = await request({ url: _apiBase });
@@ -47,7 +49,7 @@ const useAppointmentService = () => {
     };
 
     const getSpecialists = async () => {
-        const res = await request({ url: "http://localhost:3001/specialists" });
+        const res = await request({ url: _apiSpecialists });
 
         return res;
     };
@@ -61,7 +63,7 @@ const useAppointmentService = () => {
     };
 
     const checkCustomer = async (phone: number): Promise<ICustomer | undefined> => {
-        let res = await request({ url: `http://localhost:3001/customers?phone=${phone}` });
+        let res = await request({ url: `${_apiCustomers}?phone=${phone}` });
 
         return res[0];
     };
@@ -80,10 +82,11 @@ const useAppointmentService = () => {
                     age: "no data",
                     email: "no data",
                     id: +body["phone"],
+                    avatar: "/uploads/avatar.png",
                 };
 
                 request({
-                    url: "http://localhost:3001/customers",
+                    url: _apiCustomers,
                     method: "POST",
                     body: JSON.stringify(customer),
                 });

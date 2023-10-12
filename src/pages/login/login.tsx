@@ -36,7 +36,6 @@ const LoginPage = () => {
                         });
 
                         localStorage.setItem("beautyAdminAccessToken", res.token);
-                        localStorage.setItem("beautyAdminLogin", res.name);
 
                         setMessage("");
                         navigate("/");

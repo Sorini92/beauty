@@ -6,6 +6,7 @@ const useCustomerService = () => {
     const { loadingStatus, request } = useHttp();
 
     const _apiBase = "http://localhost:3001/customers";
+    const _apiAppointments = "http://localhost:3001/appointments";
 
     const getCustomers = async (): Promise<ICustomer[]> => {
         const res = await request({ url: _apiBase });
@@ -20,12 +21,12 @@ const useCustomerService = () => {
     };
 
     const getCustomerDataByPhone = async (phone: number): Promise<IAppointment[] | []> => {
-        const res = await request({ url: `http://localhost:3001/appointments?phone=${phone}` });
+        const res = await request({ url: `${_apiAppointments}?phone=${phone}` });
 
         return res;
     };
 
-    const createNewCustomer = async (body: ICustomer) => {
+    const createNewCustomer = async (body: ICustomer): Promise<void> => {
         body["phone"] = +body["phone"];
         body["id"] = +body["phone"];
         body["age"] = body["age"] === "" ? "no data" : body["age"];
@@ -38,18 +39,49 @@ const useCustomerService = () => {
         });
     };
 
-    const cancelOneCustomer = async (id: number) => {
+    const cancelOneCustomer = async (id: number): Promise<void> => {
         return await request({
             url: `${_apiBase}/${id}`,
             method: "DELETE",
         });
     };
 
-    const editCustomer = async (id: number, data: ICustomer) => {
+    const editCustomer = async (id: number, data: ICustomer): Promise<void> => {
         return await request({
             url: `${_apiBase}/${id}`,
             method: "PATCH",
             body: JSON.stringify(data),
+        });
+    };
+
+    const synchronizeCustomerAndAppointments = async (
+        id: number,
+        data: ICustomer
+    ): Promise<void> => {
+        try {
+            let response = await request({
+                url: `${_apiAppointments}?phone=${id}`,
+                method: "GET",
+            });
+
+            response.forEach((item: IAppointment) => {
+                request({
+                    url: `${_apiAppointments}/${item.id}`,
+                    method: "PATCH",
+                    body: JSON.stringify({ name: data.name }),
+                });
+            });
+        } catch {
+            throw new Error();
+        }
+    };
+
+    const uploadImage = async (formData: any): Promise<any> => {
+        return await request({
+            url: "http://localhost:3002/upload",
+            method: "POST",
+            headers: {},
+            body: formData,
         });
     };
 
@@ -61,6 +93,8 @@ const useCustomerService = () => {
         getOneCustomer,
         getCustomerDataByPhone,
         editCustomer,
+        synchronizeCustomerAndAppointments,
+        uploadImage,
     };
 };
 

@@ -32,4 +32,5 @@ export interface ICustomer {
     age: number | string;
     email: string;
     id: number;
+    avatar: string;
 }

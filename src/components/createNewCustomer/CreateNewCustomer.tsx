@@ -16,6 +16,7 @@ const CreateNewCustomer = () => {
         age: "",
         email: "",
         id: 0,
+        avatar: "/uploads/avatar.png",
     });
     const [creationStatus, setCreationStatus] = useState<boolean>(false);
 
@@ -32,6 +33,7 @@ const CreateNewCustomer = () => {
                     age: "",
                     email: "",
                     id: 0,
+                    avatar: "/uploads/avatar.png",
                 });
                 getAllCustomers();
             })
