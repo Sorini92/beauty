@@ -74,6 +74,10 @@ const CustomerPersonalPage = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [customer.phone, records.length]);
 
+    useEffect(() => {
+
+    }, [])
+
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setCreationStatus(true);
@@ -87,9 +91,7 @@ const CustomerPersonalPage = () => {
                 `${customer.phone}.${file.file.name.split(".")[1]}`
             );
 
-            uploadImage(formData).then((res) =>
-                setModifiedCustomer({ ...modifiedCustomer, avatar: res.fileUrl })
-            );
+            uploadImage(formData)
         }
 
         editCustomer(modifiedCustomer.phone, modifiedCustomer)
@@ -99,8 +101,8 @@ const CustomerPersonalPage = () => {
                 synchronizeCustomerAndAppointments(modifiedCustomer.phone, modifiedCustomer);
                 setCustomer(modifiedCustomer);
             })
-            .catch(() => {
-                alert("Error while editing customer");
+            .catch((e) => {
+                throw new Error(e)
             });
     };
 
@@ -221,7 +223,7 @@ const CustomerPersonalPage = () => {
                             />
                         </div>
 
-                        <button className="personal__information-confirm" disabled={creationStatus}>
+                        <button type="submit" className="personal__information-confirm" disabled={creationStatus}>
                             Confirm
                         </button>
                     </form>
