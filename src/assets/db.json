@@ -31,32 +31,7 @@
       "avatar": "/uploads/380683051010.jpg"
     }
   ],
-  "specialists": [
-    {
-      "id": 1,
-      "name": "Olga",
-      "services": "pedicure",
-      "phone": "+1 333 333 333"
-    },
-    {
-      "id": 2,
-      "name": "Victoria",
-      "services": "pedicure",
-      "phone": "+1 333 333 333"
-    },
-    {
-      "id": 3,
-      "name": "Nina",
-      "services": "pedicure",
-      "phone": "+1 333 333 333"
-    },
-    {
-      "id": 4,
-      "name": "Natasha",
-      "services": "pedicure",
-      "phone": "+1 333 333 333"
-    }
-  ],
+  "specialists": [],
   "appointments": [
     {
       "id": 1,

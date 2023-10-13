@@ -8,9 +8,9 @@ import Spinner from "../spinner/Spinner";
 
 import { ICustomer, IAppointment } from "../../shared/interfaces/appointment.interface";
 
-import "./customerPersonalPage.scss";
+import "./specialistPersonalPage.scss";
 
-const CustomerPersonalPage = () => {
+const SpecialistPersonalPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { isAuth } = useAuth();
@@ -289,4 +289,4 @@ const CustomerPersonalPage = () => {
     );
 };
 
-export default CustomerPersonalPage;
+export default SpecialistPersonalPage;

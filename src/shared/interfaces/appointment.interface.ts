@@ -23,7 +23,7 @@ export interface ISpecialist {
     id: number;
     name: string;
     phone: string;
-    services: string[];
+    services: string;
 }
 
 export interface ICustomer {

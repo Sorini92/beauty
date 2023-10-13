@@ -6,7 +6,7 @@ export enum ActionsTypes {
     ERROR_FETCHING_CUSTOMERS = "ERROR_FETCHING_CUSTOMERS",
 }
 
-export type UserAction =
+export type CustomersAction =
     | {
           type: ActionsTypes.SET_CUSTOMERS;
           payload: ICustomer[];

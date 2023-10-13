@@ -9,8 +9,11 @@ import PageNotFound from "../../pages/404/404";
 import LoginPage from "../../pages/login/login";
 import CustomersPage from "../../pages/customers/CustomersPage";
 import CustomerPersonalPage from "../customerPersonalPage/CustomerPersonalPage";
+import SpecialistsPage from "../../pages/specialists/SpecialistsPage";
+import SpecialistPersonalPage from "../specialistPersonalPage /SpecialistPersonalPage";
 
 import "./app.scss";
+import SpecialistsContextProvider from "../../context/specialists/specialistsContext";
 
 const router = createBrowserRouter([
     {
@@ -43,6 +46,14 @@ const router = createBrowserRouter([
                 element: <CustomerPersonalPage />,
             },
             {
+                path: "/specialists",
+                element: <SpecialistsPage />,
+            },
+            {
+                path: "/specialists/:id",
+                element: <SpecialistPersonalPage />,
+            },
+            {
                 path: "/login",
                 element: <LoginPage />,
             },
@@ -58,12 +69,14 @@ function Root() {
     return (
         <UserContextProvider>
             <CustomerContextProvider>
-                <AppointmentContextProvider>
-                    <main className="board">
-                        <Header />
-                        <Outlet />
-                    </main>
-                </AppointmentContextProvider>
+                <SpecialistsContextProvider>
+                    <AppointmentContextProvider>
+                        <main className="board">
+                            <Header />
+                            <Outlet />
+                        </main>
+                    </AppointmentContextProvider>
+                </SpecialistsContextProvider>
             </CustomerContextProvider>
         </UserContextProvider>
     );

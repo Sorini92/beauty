@@ -1,4 +1,4 @@
-import { UserAction, ActionsTypes } from "./actions";
+import { CustomersAction, ActionsTypes } from "./actions";
 import { loadingStatusOptions } from "../../hooks/http.hook";
 
 import { ICustomer } from "../../shared/interfaces/appointment.interface";
@@ -8,7 +8,7 @@ export interface ICustomerState {
     customersLoadingStatus: loadingStatusOptions;
 }
 
-export default function reducer(state: ICustomerState, action: UserAction): ICustomerState {
+export default function reducer(state: ICustomerState, action: CustomersAction): ICustomerState {
     switch (action.type) {
         case ActionsTypes.SET_CUSTOMERS:
             return {

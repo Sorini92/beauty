@@ -20,7 +20,6 @@ const useAuth = () => {
                 .then((res) => {
                     if (res === undefined || res === null) {
                         localStorage.removeItem("beautyAdminAccessToken");
-                        localStorage.removeItem("beautyAdminLogin");
 
                         setIsAuth(false);
                         navigate("/login");
