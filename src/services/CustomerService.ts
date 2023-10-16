@@ -1,4 +1,6 @@
 import { useHttp } from "../hooks/http.hook";
+import storage from "../firebase";
+import { uploadBytes, getDownloadURL, ref } from "firebase/storage";
 
 import { ICustomer, IAppointment } from "../shared/interfaces/appointment.interface";
 
@@ -76,13 +78,16 @@ const useCustomerService = () => {
         }
     };
 
-    const uploadImage = async (formData: any): Promise<any> => {
-        return await request({
-            url: "http://localhost:3002/upload",
-            method: "POST",
-            headers: {},
-            body: formData,
-        });
+    const uploadImage = async (file: File, newFileName: string): Promise<any> => {
+        const storageRef = ref(storage, `customers/${newFileName}`);
+
+        return await uploadBytes(storageRef, file)
+    };
+
+    const getImage = async (url: string): Promise<any> => {
+        const storageRef = ref(storage, `customers/${url}`);
+
+        return await getDownloadURL(storageRef)
     };
 
     return {
@@ -95,6 +100,7 @@ const useCustomerService = () => {
         editCustomer,
         synchronizeCustomerAndAppointments,
         uploadImage,
+        getImage
     };
 };
 

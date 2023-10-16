@@ -10,7 +10,7 @@ import LoginPage from "../../pages/login/login";
 import CustomersPage from "../../pages/customers/CustomersPage";
 import CustomerPersonalPage from "../customerPersonalPage/CustomerPersonalPage";
 import SpecialistsPage from "../../pages/specialists/SpecialistsPage";
-import SpecialistPersonalPage from "../specialistPersonalPage /SpecialistPersonalPage";
+import SpecialistPersonalPage from "../specialistPersonalPage/SpecialistPersonalPage";
 
 import "./app.scss";
 import SpecialistsContextProvider from "../../context/specialists/specialistsContext";

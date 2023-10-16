@@ -68,14 +68,14 @@ const useSpecialistService = () => {
         }
     };
 
-    const uploadImage = async (formData: any): Promise<any> => {
+    /* const uploadImage = async (formData: any): Promise<any> => {
         return await request({
             url: "http://localhost:3002/upload",
             method: "POST",
             headers: {},
             body: formData,
         });
-    };
+    }; */
 
     return {
         getSpecialists,
@@ -85,7 +85,6 @@ const useSpecialistService = () => {
         editSpecialist,
         synchronizeSpecialistAndAppointments,
         loadingStatus,
-        uploadImage,
     };
 };
 

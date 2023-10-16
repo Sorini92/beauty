@@ -21,6 +21,7 @@ const CustomerPersonalPage = () => {
         editCustomer,
         synchronizeCustomerAndAppointments,
         uploadImage,
+        getImage
     } = useCustomerService();
 
     const [customer, setCustomer] = useState<ICustomer>({
@@ -45,6 +46,8 @@ const CustomerPersonalPage = () => {
     const [isEditable, setIsEditable] = useState<boolean>(false);
     const [creationStatus, setCreationStatus] = useState<boolean>(false);
     const [isRecordsLoaded, setIsRecordsLoaded] = useState<boolean>(false);
+    const [avatarImage, setAvatarImage] = useState<string>('');
+    const [isAvatarImageLoaded, setIsAvatarImageLoaded] = useState<boolean>(false);
 
     const [file, setFile] = useState<any>({ file: "", imagePreviewUrl: "" });
 
@@ -54,6 +57,10 @@ const CustomerPersonalPage = () => {
                 setCustomer(res);
                 setModifiedCustomer(res);
             });
+            getImage(`${id}.jpg`).then(res => {
+                setAvatarImage(res)
+                setIsAvatarImageLoaded(true)
+            })
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
@@ -79,19 +86,23 @@ const CustomerPersonalPage = () => {
         setCreationStatus(true);
 
         if (file.file !== "" && file.imagePreviewUrl !== "") {
-            let formData = new FormData();
+            const newFileName = `${customer.phone}.${file.file.name.split(".")[1]}`;
 
-            formData.append("file", file.file, `${customer.phone}.${file.file.name.split(".")[1]}`);
-
-            uploadImage(formData);
+            uploadImage(file.file, newFileName).then((res) => {
+                setModifiedCustomer({...modifiedCustomer, avatar: res.metadata.fullPath})
+                setIsAvatarImageLoaded(true)
+            });
         }
 
         editCustomer(modifiedCustomer.phone, modifiedCustomer)
             .then(() => {
+                if (customer.name !== modifiedCustomer.name || customer.age !== modifiedCustomer.age || customer.email !== modifiedCustomer.email) {
+                    synchronizeCustomerAndAppointments(modifiedCustomer.phone, modifiedCustomer);
+                }
+                setCustomer(modifiedCustomer);
+
                 setCreationStatus(false);
                 setIsEditable(false);
-                synchronizeCustomerAndAppointments(modifiedCustomer.phone, modifiedCustomer);
-                setCustomer(modifiedCustomer);
             })
             .catch((e) => {
                 throw new Error(e);
@@ -117,10 +128,10 @@ const CustomerPersonalPage = () => {
             };
             reader.readAsDataURL(file);
 
-            setModifiedCustomer((prevData) => ({
+            /* setModifiedCustomer((prevData) => ({
                 ...prevData,
-                avatar: `/uploads/${customer.phone}.${file.name.split(".")[1]}`,
-            }));
+                avatar: `customers/${customer.phone}.${file.name.split(".")[1]}`,
+            })); */
         }
     };
 
@@ -139,7 +150,7 @@ const CustomerPersonalPage = () => {
             return (
                 <>
                     <div className="personal__information-foto">
-                        <img src={customer.avatar} alt="avatar" />
+                        {isAvatarImageLoaded ? <img src={avatarImage} alt="avatar" /> : <Spinner/>}
                     </div>
 
                     <div className="personal__information-field">Name: {customer.name}</div>

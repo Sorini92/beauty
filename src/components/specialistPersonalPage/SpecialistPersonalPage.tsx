@@ -83,7 +83,7 @@ const SpecialistPersonalPage = () => {
 
             formData.append("file", file.file, `${customer.phone}.${file.file.name.split(".")[1]}`);
 
-            uploadImage(formData);
+            //uploadImage(formData);
         }
 
         editCustomer(modifiedCustomer.phone, modifiedCustomer)
