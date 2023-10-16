@@ -45,7 +45,6 @@ const SpecialistPersonalPage = () => {
     const [isEditable, setIsEditable] = useState<boolean>(false);
     const [creationStatus, setCreationStatus] = useState<boolean>(false);
     const [isRecordsLoaded, setIsRecordsLoaded] = useState<boolean>(false);
-    const [newAvatarImageLink, setNewAvatarImageLink] = useState<string>("");
 
     const [file, setFile] = useState<any>({ file: "", imagePreviewUrl: "" });
 
@@ -56,6 +55,7 @@ const SpecialistPersonalPage = () => {
                 setModifiedCustomer(res);
             });
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
     useEffect(() => {
@@ -83,9 +83,7 @@ const SpecialistPersonalPage = () => {
 
             formData.append("file", file.file, `${customer.phone}.${file.file.name.split(".")[1]}`);
 
-            uploadImage(formData).then((res) => {
-                setNewAvatarImageLink(res);
-            });
+            uploadImage(formData);
         }
 
         editCustomer(modifiedCustomer.phone, modifiedCustomer)
