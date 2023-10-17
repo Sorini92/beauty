@@ -20,18 +20,34 @@
       "age": "50",
       "email": "my@gmail.com",
       "id": 380683056575,
-      "avatar": "/uploads/380683056575.jpg"
+      "avatar": "customers/380683056575/380683056575.jpg"
     },
     {
-      "name": "Ruslan Petrov",
-      "phone": 380683051010,
-      "age": "28",
+      "name": "Ruslan",
+      "phone": 380668887766,
+      "age": "23",
       "email": "no data",
-      "id": 380683051010,
-      "avatar": "/uploads/380683051010.jpg"
+      "id": 380668887766,
+      "avatar": "customers/380668887766/380668887766.jpg"
+    },
+    {
+      "name": "Oleg",
+      "phone": 380683052222,
+      "age": "no data",
+      "email": "no data",
+      "id": 380683052222,
+      "avatar": "customers/avatar.png"
     }
   ],
-  "specialists": [],
+  "specialists": [
+    {
+      "name": "Nina",
+      "services": "manicure",
+      "phone": "380668888888",
+      "id": 1697542019832,
+      "avatar": "specialists/1697542019832/1697542019832.jpg"
+    }
+  ],
   "appointments": [
     {
       "id": 1,
@@ -167,6 +183,15 @@
       "specialist": "Victoria",
       "canceled": false,
       "id": 1697126714057
+    },
+    {
+      "name": "Oleg",
+      "service": "pedicure",
+      "phone": 380683052222,
+      "date": "2023-11-01T22:33",
+      "specialist": "Nina",
+      "canceled": false,
+      "id": 1697544122422
     }
   ]
 }

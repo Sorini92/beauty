@@ -1,12 +1,11 @@
 import { useEffect, useState, FormEvent, ChangeEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import findMostFrequent from "../../utils/findMostFrequent";
-import useCustomerService from "../../services/CustomerService";
 import dayjs from "dayjs";
 import useAuth from "../../hooks/useAuth";
 import Spinner from "../spinner/Spinner";
+import useSpecialistService from "../../services/SpecialistService";
 
-import { ICustomer, IAppointment } from "../../shared/interfaces/appointment.interface";
+import { ISpecialist, IAppointment } from "../../shared/interfaces/appointment.interface";
 
 import "./specialistPersonalPage.scss";
 
@@ -16,82 +15,104 @@ const SpecialistPersonalPage = () => {
     const { isAuth } = useAuth();
 
     const {
-        getOneCustomer,
-        getCustomerDataByPhone,
-        editCustomer,
-        synchronizeCustomerAndAppointments,
+        getOneSpecialist,
+        editSpecialist,
+        synchronizeSpecialistAndAppointments,
+        getSpecialistDataByName,
         uploadImage,
-    } = useCustomerService();
+        getImage,
+    } = useSpecialistService();
 
-    const [customer, setCustomer] = useState<ICustomer>({
+    const [specialist, setSpecialist] = useState<ISpecialist>({
         name: "",
-        phone: 0,
-        age: "",
-        email: "",
+        phone: "",
+        services: "",
         id: 0,
         avatar: "",
     });
-    const [modifiedCustomer, setModifiedCustomer] = useState<ICustomer>({
+    const [modifiedSpecialist, setModifiedSpecialist] = useState<ISpecialist>({
         name: "",
-        phone: 0,
-        age: "",
-        email: "",
+        phone: "",
+        services: "",
         id: 0,
         avatar: "",
     });
-    const [favSpecialist, setFavSpecialist] = useState<string | undefined>("Olga");
-    const [services, setServices] = useState<string[]>([]);
     const [records, setRecords] = useState<IAppointment[]>([]);
     const [isEditable, setIsEditable] = useState<boolean>(false);
     const [creationStatus, setCreationStatus] = useState<boolean>(false);
     const [isRecordsLoaded, setIsRecordsLoaded] = useState<boolean>(false);
+    const [avatarImage, setAvatarImage] = useState<string>("");
+    const [isAvatarImageLoaded, setIsAvatarImageLoaded] = useState<boolean>(false);
+    const [isNewAvatarImageLoaded, setIsNewAvatarImageLoaded] = useState<boolean>(false);
 
     const [file, setFile] = useState<any>({ file: "", imagePreviewUrl: "" });
 
     useEffect(() => {
         if (id) {
-            getOneCustomer(id).then((res) => {
-                setCustomer(res);
-                setModifiedCustomer(res);
+            getOneSpecialist(id).then((res) => {
+                setSpecialist(res);
+                setModifiedSpecialist(res);
             });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
     useEffect(() => {
-        if (customer.phone) {
-            getCustomerDataByPhone(customer.phone).then((res) => {
+        if (specialist.avatar) {
+            getImage(specialist.avatar).then((res) => {
+                setAvatarImage(res);
+                setIsAvatarImageLoaded(true);
+            });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [specialist.phone]);
+
+    useEffect(() => {
+        if (isNewAvatarImageLoaded) {
+            getImage(specialist.avatar).then((res) => {
+                setAvatarImage(res);
+                setIsAvatarImageLoaded(true);
+                setIsNewAvatarImageLoaded(false);
+            });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isNewAvatarImageLoaded]);
+
+    useEffect(() => {
+        if (specialist.name) {
+            getSpecialistDataByName(specialist.name).then((res) => {
                 setIsRecordsLoaded(true);
                 setRecords(res);
             });
         }
-
-        let allServices = Array.from(new Set(records.map((item) => item.service)));
-        setServices(allServices);
-
-        let allSpecialists = records.map((item) => item.specialist);
-        setFavSpecialist(findMostFrequent(allSpecialists));
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [customer.phone, records.length]);
+    }, [specialist.name, records.length]);
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setCreationStatus(true);
 
         if (file.file !== "" && file.imagePreviewUrl !== "") {
-            let formData = new FormData();
+            const newFileName = `${specialist.id}.${file.file.name.split(".")[1]}`;
 
-            formData.append("file", file.file, `${customer.phone}.${file.file.name.split(".")[1]}`);
-
-            //uploadImage(formData);
+            uploadImage(file.file, newFileName, specialist.id).then((res) => {
+                setIsNewAvatarImageLoaded(true);
+            });
         }
 
-        editCustomer(modifiedCustomer.phone, modifiedCustomer)
+        editSpecialist(modifiedSpecialist.id, modifiedSpecialist)
             .then(() => {
+                if (
+                    specialist.name !== modifiedSpecialist.name ||
+                    specialist.phone !== modifiedSpecialist.phone ||
+                    specialist.services !== modifiedSpecialist.services
+                ) {
+                    synchronizeSpecialistAndAppointments(modifiedSpecialist.id, modifiedSpecialist);
+                }
+                setSpecialist(modifiedSpecialist);
+
                 setCreationStatus(false);
                 setIsEditable(false);
-                synchronizeCustomerAndAppointments(modifiedCustomer.phone, modifiedCustomer);
-                setCustomer(modifiedCustomer);
             })
             .catch((e) => {
                 throw new Error(e);
@@ -101,7 +122,7 @@ const SpecialistPersonalPage = () => {
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
 
-        setModifiedCustomer((prevData) => ({
+        setModifiedSpecialist((prevData) => ({
             ...prevData,
             [name]: value,
         }));
@@ -117,9 +138,9 @@ const SpecialistPersonalPage = () => {
             };
             reader.readAsDataURL(file);
 
-            setModifiedCustomer((prevData) => ({
+            setModifiedSpecialist((prevData) => ({
                 ...prevData,
-                avatar: `/uploads/${customer.phone}.${file.name.split(".")[1]}`,
+                avatar: `specialists/${specialist.id}/${specialist.id}.${file.name.split(".")[1]}`,
             }));
         }
     };
@@ -127,10 +148,12 @@ const SpecialistPersonalPage = () => {
     const handleClickEditMode = () => {
         if (!isEditable) {
             setIsEditable(true);
-            setModifiedCustomer(customer);
-            //setFile({ file: "", imagePreviewUrl: "" });
+            setModifiedSpecialist(specialist);
+            setIsAvatarImageLoaded(false);
+            setFile({ file: "", imagePreviewUrl: "" });
         } else {
             setIsEditable(false);
+            setIsAvatarImageLoaded(true);
         }
     };
 
@@ -138,23 +161,28 @@ const SpecialistPersonalPage = () => {
         if (!isEditable) {
             return (
                 <>
-                    <div className="personal__information-foto">
-                        <img src={customer.avatar} alt="avatar" />
+                    <div className="personalSpecialist__information-foto">
+                        {isAvatarImageLoaded ? <img src={avatarImage} alt="avatar" /> : <Spinner />}
                     </div>
 
-                    <div className="personal__information-field">Name: {customer.name}</div>
-                    <div className="personal__information-field">Phone: {customer.phone}</div>
-                    <div className="personal__information-field">Email: {customer.email}</div>
-                    <div className="personal__information-field">Age: {customer.age}</div>
+                    <div className="personalSpecialist__information-field">
+                        Name: {specialist.name}
+                    </div>
+                    <div className="personalSpecialist__information-field">
+                        Phone: {specialist.phone}
+                    </div>
+                    <div className="personalSpecialist__information-field">
+                        Services: {specialist.services}
+                    </div>
                 </>
             );
         } else {
             return (
                 <>
-                    <form className="personal__information-form" onSubmit={handleSubmit}>
-                        <div className="personal__information-foto activeFoto">
+                    <form className="personalSpecialist__information-form" onSubmit={handleSubmit}>
+                        <div className="personalSpecialist__information-foto activeFoto">
                             <img
-                                src={!file.imagePreviewUrl ? customer.avatar : file.imagePreviewUrl}
+                                src={!file.imagePreviewUrl ? avatarImage : file.imagePreviewUrl}
                                 alt="avatar"
                             />
                             <input
@@ -166,58 +194,58 @@ const SpecialistPersonalPage = () => {
                             />
                         </div>
 
-                        <div className="personal__information-form-item">
-                            <label className="personal__information-field" htmlFor="name">
+                        <div className="personalSpecialist__information-form-item">
+                            <label className="personalSpecialist__information-field" htmlFor="name">
                                 Name:
                             </label>
                             <input
                                 type="text"
                                 name="name"
-                                id="customerName"
-                                placeholder="Customer name"
+                                id="specialistName"
+                                placeholder="Specislist name"
                                 required
-                                value={modifiedCustomer.name}
+                                value={modifiedSpecialist.name}
                                 onChange={handleChange}
                             />
                         </div>
 
-                        <div className="personal__information-field">
-                            Phone: {modifiedCustomer.phone}
-                        </div>
-
-                        <div className="personal__information-form-item">
-                            <label className="personal__information-field" htmlFor="email">
-                                Email:
+                        <div className="personalSpecialist__information-field">
+                            <label
+                                className="personalSpecialist__information-field"
+                                htmlFor="phone"
+                            >
+                                Phone:
                             </label>
                             <input
                                 type="text"
-                                name="email"
-                                id="customerEmail"
-                                placeholder="Email"
-                                value={modifiedCustomer.email}
+                                name="phone"
+                                id="specialistPhone"
+                                placeholder="Phone"
+                                value={modifiedSpecialist.phone}
                                 onChange={handleChange}
                             />
                         </div>
 
-                        <div className="personal__information-form-item">
-                            <label className="personal__information-field" htmlFor="age">
-                                Age:
+                        <div className="personalSpecialist__information-form-item">
+                            <label
+                                className="personalSpecialist__information-field"
+                                htmlFor="services"
+                            >
+                                Services:
                             </label>
                             <input
                                 type="text"
-                                name="age"
-                                pattern="\d{2}"
-                                title="Only numbers from 10"
-                                id="customerAge"
-                                placeholder="Age"
-                                value={modifiedCustomer.age}
+                                name="services"
+                                id="specialistServices"
+                                placeholder="services"
+                                value={modifiedSpecialist.services}
                                 onChange={handleChange}
                             />
                         </div>
 
                         <button
                             type="submit"
-                            className="personal__information-confirm"
+                            className="personalSpecialist__information-confirm"
                             disabled={creationStatus}
                         >
                             Confirm
@@ -234,13 +262,17 @@ const SpecialistPersonalPage = () => {
             const formattedDate = dayjs(item.date).format("DD/MM/YYYY HH:mm");
 
             return (
-                <div className="personal__records-item" key={item.id}>
-                    <div className="personal__records-service">Service: {item.service}</div>
-                    <div className="personal__records-wrapper">
-                        <div className="personal__records-specialist">
-                            Specialist: {item.specialist}
+                <div className="personalSpecialist__records-item" key={item.id}>
+                    <div className="personalSpecialist__records-service">
+                        Service: {item.service}
+                    </div>
+                    <div className="personalSpecialist__records-wrapper">
+                        <div className="personalSpecialist__records-specialist">
+                            Client: {item.specialist}
                         </div>
-                        <div className="personal__records-date">Date: {formattedDate}</div>
+                        <div className="personalSpecialist__records-date">
+                            Date: {formattedDate}
+                        </div>
                     </div>
                 </div>
             );
@@ -249,37 +281,39 @@ const SpecialistPersonalPage = () => {
     if (!isAuth) return null;
 
     return (
-        <div className="personal">
-            <div className="personal__title">Customers personal page</div>
-            <div className="personal__wrapper">
-                <div className="personal__information">
+        <div className="personalSpecialist">
+            <div className="personalSpecialist__title">Specialist's personal page</div>
+            <div className="personalSpecialist__wrapper">
+                <div className="personalSpecialist__information">
                     {renderFields()}
 
-                    <div className="personal__information-field">
-                        Services: {services.join(", ")}
-                    </div>
-                    <div className="personal__information-field">
-                        Fav specialist: {favSpecialist}
-                    </div>
-
-                    <div className="personal__information-btns">
+                    <div className="personalSpecialist__information-btns">
                         <button
-                            className="personal__information-edit"
+                            className="personalSpecialist__information-edit"
                             onClick={() => handleClickEditMode()}
                         >
                             {!isEditable ? "Edit" : "Cancel"}
                         </button>
 
-                        <button className="personal__information-back" onClick={() => navigate(-1)}>
+                        <button
+                            className="personalSpecialist__information-back"
+                            onClick={() => navigate(-1)}
+                        >
                             Back
                         </button>
                     </div>
                 </div>
-                <div className="personal__records">
-                    <div className="personal__records-title">Records</div>
+                <div className="personalSpecialist__records">
+                    <div className="personalSpecialist__records-title">Records</div>
 
-                    <div className="personal__records-items">
-                        {!isRecordsLoaded ? <Spinner /> : elements}
+                    <div className="personalSpecialist__records-items">
+                        {!isRecordsLoaded ? (
+                            <Spinner />
+                        ) : elements.length === 0 ? (
+                            <div className="emptyRecords">No records yet</div>
+                        ) : (
+                            elements
+                        )}
                     </div>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 import { useHttp } from "../hooks/http.hook";
 import storage from "../firebase";
-import { uploadBytes, getDownloadURL, ref } from "firebase/storage";
+import { uploadBytes, getDownloadURL, listAll, ref, deleteObject } from "firebase/storage";
 
 import { ICustomer, IAppointment } from "../shared/interfaces/appointment.interface";
 
@@ -33,6 +33,7 @@ const useCustomerService = () => {
         body["id"] = +body["phone"];
         body["age"] = body["age"] === "" ? "no data" : body["age"];
         body["email"] = body["email"] === "" ? "no data" : body["email"];
+        body["avatar"] = "customers/avatar.png";
 
         return await request({
             url: _apiBase,
@@ -42,6 +43,14 @@ const useCustomerService = () => {
     };
 
     const cancelOneCustomer = async (id: number): Promise<void> => {
+        const listRef = ref(storage, `customers/${id}`);
+
+        listAll(listRef).then((res) => {
+            res.items.forEach((itemRef) => {
+                deleteObject(itemRef);
+            });
+        });
+
         return await request({
             url: `${_apiBase}/${id}`,
             method: "DELETE",
@@ -78,16 +87,16 @@ const useCustomerService = () => {
         }
     };
 
-    const uploadImage = async (file: File, newFileName: string): Promise<any> => {
-        const storageRef = ref(storage, `customers/${newFileName}`);
+    const uploadImage = async (file: File, newFileName: string, phone: number): Promise<any> => {
+        const storageRef = ref(storage, `customers/${phone}/${newFileName}`);
 
-        return await uploadBytes(storageRef, file)
+        return await uploadBytes(storageRef, file);
     };
 
     const getImage = async (url: string): Promise<any> => {
-        const storageRef = ref(storage, `customers/${url}`);
+        const storageRef = ref(storage, `${url}`);
 
-        return await getDownloadURL(storageRef)
+        return await getDownloadURL(storageRef);
     };
 
     return {
@@ -100,7 +109,7 @@ const useCustomerService = () => {
         editCustomer,
         synchronizeCustomerAndAppointments,
         uploadImage,
-        getImage
+        getImage,
     };
 };
 

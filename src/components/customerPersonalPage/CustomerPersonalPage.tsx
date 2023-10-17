@@ -21,7 +21,7 @@ const CustomerPersonalPage = () => {
         editCustomer,
         synchronizeCustomerAndAppointments,
         uploadImage,
-        getImage
+        getImage,
     } = useCustomerService();
 
     const [customer, setCustomer] = useState<ICustomer>({
@@ -46,8 +46,9 @@ const CustomerPersonalPage = () => {
     const [isEditable, setIsEditable] = useState<boolean>(false);
     const [creationStatus, setCreationStatus] = useState<boolean>(false);
     const [isRecordsLoaded, setIsRecordsLoaded] = useState<boolean>(false);
-    const [avatarImage, setAvatarImage] = useState<string>('');
+    const [avatarImage, setAvatarImage] = useState<string>("");
     const [isAvatarImageLoaded, setIsAvatarImageLoaded] = useState<boolean>(false);
+    const [isNewAvatarImageLoaded, setIsNewAvatarImageLoaded] = useState<boolean>(false);
 
     const [file, setFile] = useState<any>({ file: "", imagePreviewUrl: "" });
 
@@ -57,13 +58,30 @@ const CustomerPersonalPage = () => {
                 setCustomer(res);
                 setModifiedCustomer(res);
             });
-            getImage(`${id}.jpg`).then(res => {
-                setAvatarImage(res)
-                setIsAvatarImageLoaded(true)
-            })
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
+
+    useEffect(() => {
+        if (customer.avatar) {
+            getImage(customer.avatar).then((res) => {
+                setAvatarImage(res);
+                setIsAvatarImageLoaded(true);
+            });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [customer.phone]);
+
+    useEffect(() => {
+        if (isNewAvatarImageLoaded) {
+            getImage(customer.avatar).then((res) => {
+                setAvatarImage(res);
+                setIsAvatarImageLoaded(true);
+                setIsNewAvatarImageLoaded(false);
+            });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isNewAvatarImageLoaded]);
 
     useEffect(() => {
         if (customer.phone) {
@@ -88,15 +106,18 @@ const CustomerPersonalPage = () => {
         if (file.file !== "" && file.imagePreviewUrl !== "") {
             const newFileName = `${customer.phone}.${file.file.name.split(".")[1]}`;
 
-            uploadImage(file.file, newFileName).then((res) => {
-                setModifiedCustomer({...modifiedCustomer, avatar: res.metadata.fullPath})
-                setIsAvatarImageLoaded(true)
+            uploadImage(file.file, newFileName, customer.phone).then((res) => {
+                setIsNewAvatarImageLoaded(true);
             });
         }
 
         editCustomer(modifiedCustomer.phone, modifiedCustomer)
             .then(() => {
-                if (customer.name !== modifiedCustomer.name || customer.age !== modifiedCustomer.age || customer.email !== modifiedCustomer.email) {
+                if (
+                    customer.name !== modifiedCustomer.name ||
+                    customer.age !== modifiedCustomer.age ||
+                    customer.email !== modifiedCustomer.email
+                ) {
                     synchronizeCustomerAndAppointments(modifiedCustomer.phone, modifiedCustomer);
                 }
                 setCustomer(modifiedCustomer);
@@ -126,12 +147,13 @@ const CustomerPersonalPage = () => {
             reader.onloadend = () => {
                 setFile({ file: file, imagePreviewUrl: reader.result });
             };
+
             reader.readAsDataURL(file);
 
-            /* setModifiedCustomer((prevData) => ({
+            setModifiedCustomer((prevData) => ({
                 ...prevData,
-                avatar: `customers/${customer.phone}.${file.name.split(".")[1]}`,
-            })); */
+                avatar: `customers/${customer.phone}/${customer.phone}.${file.name.split(".")[1]}`,
+            }));
         }
     };
 
@@ -139,9 +161,11 @@ const CustomerPersonalPage = () => {
         if (!isEditable) {
             setIsEditable(true);
             setModifiedCustomer(customer);
-            //setFile({ file: "", imagePreviewUrl: "" });
+            setIsAvatarImageLoaded(false);
+            setFile({ file: "", imagePreviewUrl: "" });
         } else {
             setIsEditable(false);
+            setIsAvatarImageLoaded(true);
         }
     };
 
@@ -149,23 +173,27 @@ const CustomerPersonalPage = () => {
         if (!isEditable) {
             return (
                 <>
-                    <div className="personal__information-foto">
-                        {isAvatarImageLoaded ? <img src={avatarImage} alt="avatar" /> : <Spinner/>}
+                    <div className="personalCustomer__information-foto">
+                        {isAvatarImageLoaded ? <img src={avatarImage} alt="avatar" /> : <Spinner />}
                     </div>
 
-                    <div className="personal__information-field">Name: {customer.name}</div>
-                    <div className="personal__information-field">Phone: {customer.phone}</div>
-                    <div className="personal__information-field">Email: {customer.email}</div>
-                    <div className="personal__information-field">Age: {customer.age}</div>
+                    <div className="personalCustomer__information-field">Name: {customer.name}</div>
+                    <div className="personalCustomer__information-field">
+                        Phone: {customer.phone}
+                    </div>
+                    <div className="personalCustomer__information-field">
+                        Email: {customer.email}
+                    </div>
+                    <div className="personalCustomer__information-field">Age: {customer.age}</div>
                 </>
             );
         } else {
             return (
                 <>
-                    <form className="personal__information-form" onSubmit={handleSubmit}>
-                        <div className="personal__information-foto activeFoto">
+                    <form className="personalCustomer__information-form" onSubmit={handleSubmit}>
+                        <div className="personalCustomer__information-foto activeFoto">
                             <img
-                                src={!file.imagePreviewUrl ? customer.avatar : file.imagePreviewUrl}
+                                src={!file.imagePreviewUrl ? avatarImage : file.imagePreviewUrl}
                                 alt="avatar"
                             />
                             <input
@@ -177,8 +205,8 @@ const CustomerPersonalPage = () => {
                             />
                         </div>
 
-                        <div className="personal__information-form-item">
-                            <label className="personal__information-field" htmlFor="name">
+                        <div className="personalCustomer__information-form-item">
+                            <label className="personalCustomer__information-field" htmlFor="name">
                                 Name:
                             </label>
                             <input
@@ -192,12 +220,12 @@ const CustomerPersonalPage = () => {
                             />
                         </div>
 
-                        <div className="personal__information-field">
+                        <div className="personalCustomer__information-field">
                             Phone: {modifiedCustomer.phone}
                         </div>
 
-                        <div className="personal__information-form-item">
-                            <label className="personal__information-field" htmlFor="email">
+                        <div className="personalCustomer__information-form-item">
+                            <label className="personalCustomer__information-field" htmlFor="email">
                                 Email:
                             </label>
                             <input
@@ -210,8 +238,8 @@ const CustomerPersonalPage = () => {
                             />
                         </div>
 
-                        <div className="personal__information-form-item">
-                            <label className="personal__information-field" htmlFor="age">
+                        <div className="personalCustomer__information-form-item">
+                            <label className="personalCustomer__information-field" htmlFor="age">
                                 Age:
                             </label>
                             <input
@@ -228,7 +256,7 @@ const CustomerPersonalPage = () => {
 
                         <button
                             type="submit"
-                            className="personal__information-confirm"
+                            className="personalCustomer__information-confirm"
                             disabled={creationStatus}
                         >
                             Confirm
@@ -245,13 +273,13 @@ const CustomerPersonalPage = () => {
             const formattedDate = dayjs(item.date).format("DD/MM/YYYY HH:mm");
 
             return (
-                <div className="personal__records-item" key={item.id}>
-                    <div className="personal__records-service">Service: {item.service}</div>
-                    <div className="personal__records-wrapper">
-                        <div className="personal__records-specialist">
+                <div className="personalCustomer__records-item" key={item.id}>
+                    <div className="personalCustomer__records-service">Service: {item.service}</div>
+                    <div className="personalCustomer__records-wrapper">
+                        <div className="personalCustomer__records-specialist">
                             Specialist: {item.specialist}
                         </div>
-                        <div className="personal__records-date">Date: {formattedDate}</div>
+                        <div className="personalCustomer__records-date">Date: {formattedDate}</div>
                     </div>
                 </div>
             );
@@ -260,37 +288,46 @@ const CustomerPersonalPage = () => {
     if (!isAuth) return null;
 
     return (
-        <div className="personal">
-            <div className="personal__title">Customers personal page</div>
-            <div className="personal__wrapper">
-                <div className="personal__information">
+        <div className="personalCustomer">
+            <div className="personalCustomer__title">Customers personal page</div>
+            <div className="personalCustomer__wrapper">
+                <div className="personalCustomer__information">
                     {renderFields()}
 
-                    <div className="personal__information-field">
+                    <div className="personalCustomer__information-field">
                         Services: {services.join(", ")}
                     </div>
-                    <div className="personal__information-field">
+                    <div className="personalCustomer__information-field">
                         Fav specialist: {favSpecialist}
                     </div>
 
-                    <div className="personal__information-btns">
+                    <div className="personalCustomer__information-btns">
                         <button
-                            className="personal__information-edit"
+                            className="personalCustomer__information-edit"
                             onClick={() => handleClickEditMode()}
                         >
                             {!isEditable ? "Edit" : "Cancel"}
                         </button>
 
-                        <button className="personal__information-back" onClick={() => navigate(-1)}>
+                        <button
+                            className="personalCustomer__information-back"
+                            onClick={() => navigate(-1)}
+                        >
                             Back
                         </button>
                     </div>
                 </div>
-                <div className="personal__records">
-                    <div className="personal__records-title">Records</div>
+                <div className="personalCustomer__records">
+                    <div className="personalCustomer__records-title">Records</div>
 
-                    <div className="personal__records-items">
-                        {!isRecordsLoaded ? <Spinner /> : elements}
+                    <div className="personalCustomer__records-items">
+                        {!isRecordsLoaded ? (
+                            <Spinner />
+                        ) : elements.length === 0 ? (
+                            <div className="emptyRecords">No records yet</div>
+                        ) : (
+                            elements
+                        )}
                     </div>
                 </div>
             </div>

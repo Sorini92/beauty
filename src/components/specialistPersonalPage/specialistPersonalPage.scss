@@ -1,6 +1,6 @@
 @import "../../style/variables.scss";
 
-.personal {
+.personalSpecialist {
     background-color: #fff;
     margin-top: 70px;
     height: 573px;
@@ -47,7 +47,7 @@
         &-confirm {
             position: absolute;
             right: 80px;
-            bottom: -120px;
+            bottom: -158px;
             width: 100px;
             height: 30px;
             border: 1px solid rgba(0, 0, 0, 0.4);
@@ -65,6 +65,8 @@
             font-size: 15px;
         }
         &-btns {
+            position: absolute;
+            bottom: 10px;
             margin-top: 20px;
             display: flex;
             flex-direction: column;

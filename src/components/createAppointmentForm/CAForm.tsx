@@ -86,19 +86,6 @@ function CAForm() {
                 onChange={handleChange}
             />
 
-            <label htmlFor="service">
-                Service<span>*</span>
-            </label>
-            <input
-                type="text"
-                name="service"
-                id="service"
-                placeholder="Service name"
-                required
-                value={formData.service}
-                onChange={handleChange}
-            />
-
             <label htmlFor="specialist">
                 Specialist<span>*</span>
             </label>
@@ -115,6 +102,19 @@ function CAForm() {
                 </option>
                 {renderSpecialists()}
             </select>
+
+            <label htmlFor="service">
+                Service<span>*</span>
+            </label>
+            <input
+                type="text"
+                name="service"
+                id="service"
+                placeholder="Service name"
+                required
+                value={formData.service}
+                onChange={handleChange}
+            />
 
             <label htmlFor="phone">
                 Phone number<span>*</span>

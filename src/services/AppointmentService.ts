@@ -82,7 +82,7 @@ const useAppointmentService = () => {
                     age: "no data",
                     email: "no data",
                     id: +body["phone"],
-                    avatar: "/uploads/avatar.png",
+                    avatar: "customers/avatar.png",
                 };
 
                 request({

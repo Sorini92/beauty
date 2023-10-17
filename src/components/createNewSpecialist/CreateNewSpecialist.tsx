@@ -15,6 +15,7 @@ const CreateNewSpecialist = () => {
         services: "",
         phone: "",
         id: 0,
+        avatar: "",
     });
     const [creationStatus, setCreationStatus] = useState<boolean>(false);
 
@@ -30,6 +31,7 @@ const CreateNewSpecialist = () => {
                     services: "",
                     phone: "",
                     id: 0,
+                    avatar: "",
                 });
                 getAllSpecialists();
             })

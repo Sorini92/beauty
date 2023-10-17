@@ -1,4 +1,6 @@
+import { uploadBytes, getDownloadURL, listAll, ref, deleteObject } from "firebase/storage";
 import { useHttp } from "../hooks/http.hook";
+import storage from "../firebase";
 
 import { ISpecialist, IAppointment } from "../shared/interfaces/appointment.interface";
 
@@ -20,9 +22,16 @@ const useSpecialistService = () => {
         return res;
     };
 
+    const getSpecialistDataByName = async (name: string): Promise<IAppointment[] | []> => {
+        const res = await request({ url: `${_apiAppointments}?specialist=${name}` });
+
+        return res;
+    };
+
     const createNewSpecialist = async (body: ISpecialist): Promise<void> => {
         const id = new Date().getTime();
         body["id"] = id;
+        body["avatar"] = "specialists/avatar.png";
 
         return await request({
             url: _apiBase,
@@ -32,6 +41,14 @@ const useSpecialistService = () => {
     };
 
     const cancelOneSpecialist = async (id: number): Promise<void> => {
+        const listRef = ref(storage, `specialists/${id}`);
+
+        listAll(listRef).then((res) => {
+            res.items.forEach((itemRef) => {
+                deleteObject(itemRef);
+            });
+        });
+
         return await request({
             url: `${_apiBase}/${id}`,
             method: "DELETE",
@@ -68,14 +85,17 @@ const useSpecialistService = () => {
         }
     };
 
-    /* const uploadImage = async (formData: any): Promise<any> => {
-        return await request({
-            url: "http://localhost:3002/upload",
-            method: "POST",
-            headers: {},
-            body: formData,
-        });
-    }; */
+    const uploadImage = async (file: File, newFileName: string, phone: number): Promise<any> => {
+        const storageRef = ref(storage, `specialists/${phone}/${newFileName}`);
+
+        return await uploadBytes(storageRef, file);
+    };
+
+    const getImage = async (url: string): Promise<any> => {
+        const storageRef = ref(storage, `${url}`);
+
+        return await getDownloadURL(storageRef);
+    };
 
     return {
         getSpecialists,
@@ -84,7 +104,10 @@ const useSpecialistService = () => {
         cancelOneSpecialist,
         editSpecialist,
         synchronizeSpecialistAndAppointments,
+        getSpecialistDataByName,
         loadingStatus,
+        getImage,
+        uploadImage,
     };
 };
 
