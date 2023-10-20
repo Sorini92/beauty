@@ -1,9 +1,9 @@
 @import "../../style/variables.scss";
 
-.caform {
-	margin-top: 35px;
+.addMaterials {
+	margin-bottom: 35px;
 	width: 280px;
-	height: 430px;
+	min-height: 270px;
 	padding: 20px;
 	background-color: #fff;
 	box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.25);
@@ -14,6 +14,22 @@
 		color: rgba(0, 0, 0, 0.7);
 		text-align: center;
 		margin-bottom: 15px;
+	}
+	&__plus {
+		width: 24px;
+		height: 24px;
+		flex-shrink: 0;
+		border: 1px solid rgba(0, 0, 0, 0.15);
+		background: #EEECEC;
+		text-align: center;
+		color: rgba(0, 0, 0, 0.50);
+		font-style: normal;
+		font-weight: 600;
+		cursor: pointer;
+	}
+	&__addRemoveBtns {
+		display: flex;
+		justify-content: space-between;
 	}
 	label {
 		display: block;
@@ -51,7 +67,7 @@
 		color: rgba(0, 0, 0, 0.5);
 		margin-bottom: 15px;
 	}
-	button {
+	&__create {
 		width: 150px;
 		height: 40px;
 		display: block;

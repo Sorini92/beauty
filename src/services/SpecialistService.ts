@@ -29,9 +29,14 @@ const useSpecialistService = () => {
     };
 
     const createNewSpecialist = async (body: ISpecialist): Promise<void> => {
+        const regex = /[^a-zA-Zа-яА-Я0-9]+/g;
         const id = new Date().getTime();
+
         body["id"] = id;
         body["avatar"] = "specialists/avatar.png";
+        if (typeof body["services"] === "string") {
+            body["services"] = body.services.replace(regex, " ").split(" ");
+        }
 
         return await request({
             url: _apiBase,

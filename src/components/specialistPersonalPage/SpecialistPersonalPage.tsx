@@ -149,11 +149,17 @@ const SpecialistPersonalPage = () => {
         if (!isEditable) {
             setIsEditable(true);
             setModifiedSpecialist(specialist);
-            setIsAvatarImageLoaded(false);
+            //setIsAvatarImageLoaded(false);
             setFile({ file: "", imagePreviewUrl: "" });
         } else {
             setIsEditable(false);
-            setIsAvatarImageLoaded(true);
+            //setIsAvatarImageLoaded(true);
+        }
+    };
+
+    const services = (arr: string[] | string) => {
+        if (Array.isArray(arr)) {
+            return arr.join(", ");
         }
     };
 
@@ -172,7 +178,7 @@ const SpecialistPersonalPage = () => {
                         Phone: {specialist.phone}
                     </div>
                     <div className="personalSpecialist__information-field">
-                        Services: {specialist.services}
+                        Services: {services(specialist.services)}
                     </div>
                 </>
             );

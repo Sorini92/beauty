@@ -1,0 +1,76 @@
+@import "../../style/variables.scss";
+
+.material {
+	position: relative;
+	padding: 10px 0;
+	height: 40px;
+	border-bottom: 1px solid black;
+	&__info {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+	&__material {
+		width: 170px;
+	}
+	&__date {
+		width: 200px;
+	}
+	&__quantity {
+		width: 100px;
+	}
+	div {
+		font-weight: 600;
+		font-size: 15px;
+		line-height: 20px;
+		color: rgba(0, 0, 0, 0.7);
+		span {
+			font-weight: 900;
+		}
+	}
+	&__cancel {
+		position: absolute;
+		width: 75px;
+		height: 20px;
+		right: 15px;
+		bottom: 15px;
+		padding: 2px 0;
+		background: #ffffff;
+		border: 1px solid $cancel;
+		cursor: pointer;
+		font-weight: 600;
+		font-size: 12px;
+		line-height: 16px;
+		color: rgba(0, 0, 0, 0.7);
+		transition: 0.3s all;
+		&:hover {
+			color: #fff;
+			background-color: $cancel;
+		}
+		&:disabled {
+			color: #fff;
+			background-color: $inputs;
+			border: none;
+		}
+	}
+	&__personal {
+		position: absolute;
+		width: 100px;
+		font-size: 12px;
+		text-align: center;
+		height: 20px;
+		right: 100px;
+		bottom: 15px;
+		border: 1px solid rgba(0, 0, 0, 0.4);
+		cursor: pointer;
+		background-color: #fff;
+		color: black;
+		transition: 0.3s all;
+		&:hover {
+			background-color: $inputs;
+		}
+		&:disabled {
+			background-color: $disabled;
+		}
+	}
+}

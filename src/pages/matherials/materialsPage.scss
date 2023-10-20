@@ -1,0 +1,37 @@
+@import "../../style/variables.scss";
+
+.materials {
+	display: grid;
+	grid-template-columns: 280px 500px;
+	column-gap: 120px;
+	padding-top: 50px;
+	&__controls {
+		display: flex;
+		flex-direction: column;
+	}
+	&__list {
+		display: grid;
+		grid-auto-rows: 15px;
+		row-gap: 25px;
+		overflow-y:scroll;
+        height: 750px;
+		width: 515px;
+	}
+	&__reload {
+		padding: 10px 20px;
+		width: 150px;
+		height: 40px;
+		margin: 30px auto 0 auto;
+		background: $inputs;
+		border: 1px solid rgba(0, 0, 0, 0.4);
+		border-radius: 24px;
+		font-weight: 600;
+		font-size: 15px;
+		line-height: 20px;
+		color: #000000;
+		cursor: pointer;
+		&:disabled {
+			background: $disabled;
+		}
+	}
+}

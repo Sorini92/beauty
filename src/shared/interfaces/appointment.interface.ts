@@ -35,3 +35,11 @@ export interface ICustomer {
     id: number;
     avatar: string;
 }
+export type IAvailableMaterials = string[];
+
+export interface IMaterial {
+    id: number;
+    material: string;
+    quantity: number;
+    date: number;
+}

@@ -70,6 +70,19 @@ function CAForm() {
         });
     };
 
+    const renderServices = (specialist: string) => {
+        let services = specialists
+            .filter((item) => item.name === specialist)
+            .map((item) => item.services)
+            .flat();
+
+        return services.map((item, i) => (
+            <option key={i} value={item}>
+                {item}
+            </option>
+        ));
+    };
+
     return (
         <form className="caform" onSubmit={handleSubmit}>
             <div className="caform__title">Create new appointment</div>
@@ -106,15 +119,20 @@ function CAForm() {
             <label htmlFor="service">
                 Service<span>*</span>
             </label>
-            <input
-                type="text"
-                name="service"
-                id="service"
-                placeholder="Service name"
+            <select
+                disabled={formData.specialist === ""}
                 required
+                id="service"
+                name="service"
+                placeholder="Services"
                 value={formData.service}
                 onChange={handleChange}
-            />
+            >
+                <option disabled value="">
+                    Service name
+                </option>
+                {renderServices(formData.specialist)}
+            </select>
 
             <label htmlFor="phone">
                 Phone number<span>*</span>

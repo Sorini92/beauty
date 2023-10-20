@@ -9,11 +9,17 @@ type SpecialistProps = ISpecialist & {
 };
 
 const SpecialistItem = memo(({ id, name, services, phone, openModal }: SpecialistProps) => {
+    const serviceElements = (arr: string[] | string) => {
+        if (Array.isArray(arr)) {
+            return arr.join(", ");
+        }
+    };
+
     return (
         <div className="specialist">
             <div className="specialist__info">
                 <span className="specialist__name">Name: {name}</span>
-                <span className="specialist__services">Services: {services}</span>
+                <span className="specialist__services">Services: {serviceElements(services)}</span>
                 <span className="specialist__phone">Phone: {phone}</span>
             </div>
 

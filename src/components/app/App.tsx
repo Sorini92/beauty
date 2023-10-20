@@ -11,9 +11,11 @@ import CustomersPage from "../../pages/customers/CustomersPage";
 import CustomerPersonalPage from "../customerPersonalPage/CustomerPersonalPage";
 import SpecialistsPage from "../../pages/specialists/SpecialistsPage";
 import SpecialistPersonalPage from "../specialistPersonalPage/SpecialistPersonalPage";
+import MaterialsPage from "../../pages/matherials/MaterialsPage";
+import SpecialistsContextProvider from "../../context/specialists/specialistsContext";
+import MaterialsContextProvider from "../../context/materials/materialsContext";
 
 import "./app.scss";
-import SpecialistsContextProvider from "../../context/specialists/specialistsContext";
 
 const router = createBrowserRouter([
     {
@@ -32,6 +34,10 @@ const router = createBrowserRouter([
             {
                 path: "/history",
                 element: <HistoryPage />,
+            },
+            {
+                path: "/materials",
+                element: <MaterialsPage />,
             },
             {
                 path: "/customers",
@@ -71,10 +77,12 @@ function Root() {
             <CustomerContextProvider>
                 <SpecialistsContextProvider>
                     <AppointmentContextProvider>
-                        <main className="board">
-                            <Header />
-                            <Outlet />
-                        </main>
+                        <MaterialsContextProvider>
+                            <main className="board">
+                                <Header />
+                                <Outlet />
+                            </main>
+                        </MaterialsContextProvider>
                     </AppointmentContextProvider>
                 </SpecialistsContextProvider>
             </CustomerContextProvider>

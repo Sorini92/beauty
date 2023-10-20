@@ -161,11 +161,11 @@ const CustomerPersonalPage = () => {
         if (!isEditable) {
             setIsEditable(true);
             setModifiedCustomer(customer);
-            setIsAvatarImageLoaded(false);
+            //setIsAvatarImageLoaded(false);
             setFile({ file: "", imagePreviewUrl: "" });
         } else {
             setIsEditable(false);
-            setIsAvatarImageLoaded(true);
+            //setIsAvatarImageLoaded(true);
         }
     };
 
