@@ -26,7 +26,7 @@ function AddMaterials({ createFunc, text }: IAddMaterialProps) {
     useEffect(() => {
         getAvailableMaterials().then((res) => {
             setAvailableMaterials(res);
-            setRemainingMaterials(res);
+            //setRemainingMaterials(res);
         });
     }, []);
 
