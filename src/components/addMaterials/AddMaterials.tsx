@@ -5,6 +5,7 @@ import { MaterialsContext } from "../../context/materials/materialsContext";
 import { IAvailableMaterials, IMaterial } from "../../shared/interfaces/appointment.interface";
 
 import "./addMaterials.scss";
+import AddMaterialsFormItem from "../addMaterialsFormItem/AddMaterialsFormItem";
 
 interface IAddMaterialProps {
     createFunc: (body: IMaterial[]) => Promise<void>;
@@ -20,13 +21,13 @@ function AddMaterials({ createFunc, text }: IAddMaterialProps) {
     ]);
     const [creationStatus, setCreationStatus] = useState<boolean>(false);
     const [availableMaterials, setAvailableMaterials] = useState<IAvailableMaterials>([]);
-    const [remainingMaterials, setRemainingMaterials] = useState<IAvailableMaterials>([]);
+    const [remainingMaterials, setRemainingMaterials] = useState<IAvailableMaterials[]>([]);
     const formIndex = useRef(1);
 
     useEffect(() => {
         getAvailableMaterials().then((res) => {
             setAvailableMaterials(res);
-            //setRemainingMaterials(res);
+            setRemainingMaterials([res]);
         });
     }, []);
 
@@ -38,6 +39,7 @@ function AddMaterials({ createFunc, text }: IAddMaterialProps) {
             .then(() => {
                 setCreationStatus(false);
                 setFormDataArray([{ material: "", quantity: 0, id: 0, date: 0 }]);
+                setRemainingMaterials([availableMaterials]);
                 getAllMaterials();
             })
             .catch(() => {
@@ -61,26 +63,22 @@ function AddMaterials({ createFunc, text }: IAddMaterialProps) {
     };
 
     const addOrderForm = () => {
-        if (formDataArray.length < availableMaterials.length) {
+        if (
+            formDataArray.length < availableMaterials.length &&
+            formDataArray[formIndex.current - 1]?.material !== ""
+        ) {
             setFormDataArray([...formDataArray, { material: "", quantity: 0, id: 0, date: 0 }]);
+
+            setRemainingMaterials([
+                ...remainingMaterials,
+                remainingMaterials[formIndex.current - 1]?.filter(
+                    (item) => item !== formDataArray[formIndex.current - 1]?.material
+                ),
+            ]);
+
+            formIndex.current = formIndex.current + 1;
         }
     };
-
-    const removeOrderForm = (index: number) => {
-        const values = [...formDataArray];
-        if (index >= 1) {
-            values.splice(index, 1);
-            setFormDataArray(values);
-        }
-    };
-
-    const renderMaterials = remainingMaterials.map((item, i) => {
-        return (
-            <option key={i} value={item}>
-                {item}
-            </option>
-        );
-    });
 
     return (
         <form className="addMaterials" onSubmit={handleSubmit}>
@@ -89,49 +87,18 @@ function AddMaterials({ createFunc, text }: IAddMaterialProps) {
             {formDataArray.map((formData, index) => {
                 return (
                     <div key={index}>
-                        <label htmlFor={`material-${index}`}>
-                            Name<span>*</span>
-                        </label>
-                        <select
-                            required
-                            id={`material-${index}`}
-                            name="material"
-                            value={formData.material}
-                            onChange={(e) => handleChange(index, e)}
-                        >
-                            <option disabled value="">
-                                Material name
-                            </option>
-                            {renderMaterials}
-                        </select>
-
-                        <label htmlFor={`quantity-${index}`}>
-                            Quantity<span>*</span>
-                        </label>
-                        <input
-                            type="text"
-                            name="quantity"
-                            id={`quantity-${index}`}
-                            placeholder="0"
-                            required
-                            value={formData.quantity === 0 ? "" : formData.quantity}
-                            onChange={(e) => handleChange(index, e)}
+                        <AddMaterialsFormItem
+                            index={index}
+                            formData={formData}
+                            handleChange={handleChange}
+                            availableMaterials={remainingMaterials[index]}
                         />
                     </div>
                 );
             })}
 
-            <div className="addMaterials__addRemoveBtns">
-                <div
-                    onClick={() => removeOrderForm(formIndex.current)}
-                    className="addMaterials__plus"
-                >
-                    -
-                </div>
-
-                <div onClick={() => addOrderForm()} className="addMaterials__plus">
-                    +
-                </div>
+            <div onClick={() => addOrderForm()} className="addMaterials__plus">
+                +
             </div>
 
             <button className="addMaterials__create" disabled={creationStatus}>
