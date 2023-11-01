@@ -10,7 +10,7 @@ const PageNotFound = () => {
         <div className="page-not-found">
             <Error />
             <h1>This page wasn't found</h1>
-            <button onClick={() => navigate(-1)}>Go one step back</button>
+            <button onClick={() => navigate("/")}>To main page</button>
         </div>
     );
 };
