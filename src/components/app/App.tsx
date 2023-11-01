@@ -1,7 +1,6 @@
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
-import UserContextProvider from "../../context/user/userContext";
-import AppointmentContextProvider from "../../context/appointments/AppointmentsContext";
-import CustomerContextProvider from "../../context/customers/customersContext";
+import AppProviders from "../appProviders/AppProviders";
+
 import Header from "../header/Header";
 import SchedulePage from "../../pages/schedule/SchedulePage";
 import HistoryPage from "../../pages/history/HistoryPage";
@@ -12,8 +11,6 @@ import CustomerPersonalPage from "../customerPersonalPage/CustomerPersonalPage";
 import SpecialistsPage from "../../pages/specialists/SpecialistsPage";
 import SpecialistPersonalPage from "../specialistPersonalPage/SpecialistPersonalPage";
 import MaterialsPage from "../../pages/matherials/MaterialsPage";
-import SpecialistsContextProvider from "../../context/specialists/specialistsContext";
-import MaterialsContextProvider from "../../context/materials/materialsContext";
 
 import "./app.scss";
 
@@ -73,20 +70,12 @@ function App() {
 
 function Root() {
     return (
-        <UserContextProvider>
-            <CustomerContextProvider>
-                <SpecialistsContextProvider>
-                    <AppointmentContextProvider>
-                        <MaterialsContextProvider>
-                            <main className="board">
-                                <Header />
-                                <Outlet />
-                            </main>
-                        </MaterialsContextProvider>
-                    </AppointmentContextProvider>
-                </SpecialistsContextProvider>
-            </CustomerContextProvider>
-        </UserContextProvider>
+        <AppProviders>
+            <main className="board">
+                <Header />
+                <Outlet />
+            </main>
+        </AppProviders>
     );
 }
 
