@@ -2,6 +2,7 @@ import { useHttp } from "../hooks/http.hook";
 import hasRequiredFields from "../utils/hasRequiredFields";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { _apiCustomers, _apiSpecialists, _apiAppointments } from "../config/api.config";
 
 import {
     IAppointment,
@@ -16,12 +17,8 @@ const requiredFields = ["id", "date", "name", "service", "phone", "canceled"];
 const useAppointmentService = () => {
     const { loadingStatus, request } = useHttp();
 
-    const _apiBase = "http://localhost:3001/appointments";
-    const _apiSpecialists = "http://localhost:3001/specialists";
-    const _apiCustomers = "http://localhost:3001/customers";
-
     const getAllAppointments = async (): Promise<IAppointment[]> => {
-        const res = await request({ url: _apiBase });
+        const res = await request({ url: _apiAppointments });
         if (res.every((item: IAppointment) => hasRequiredFields(item, requiredFields))) {
             return res;
         } else {
@@ -56,7 +53,7 @@ const useAppointmentService = () => {
 
     const cancelOneAppointment = async (id: number) => {
         return await request({
-            url: `${_apiBase}/${id}`,
+            url: `${_apiAppointments}/${id}`,
             method: "PATCH",
             body: JSON.stringify({ canceled: true }),
         });
@@ -94,7 +91,7 @@ const useAppointmentService = () => {
         });
 
         return await request({
-            url: _apiBase,
+            url: _apiAppointments,
             method: "POST",
             body: JSON.stringify(body),
         });

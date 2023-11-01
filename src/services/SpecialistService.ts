@@ -1,5 +1,6 @@
 import { uploadBytes, getDownloadURL, listAll, ref, deleteObject } from "firebase/storage";
 import { useHttp } from "../hooks/http.hook";
+import { _apiAppointments, _apiSpecialists } from "../config/api.config";
 import storage from "../firebase";
 
 import { ISpecialist, IAppointment } from "../shared/interfaces/appointment.interface";
@@ -7,17 +8,14 @@ import { ISpecialist, IAppointment } from "../shared/interfaces/appointment.inte
 const useSpecialistService = () => {
     const { loadingStatus, request } = useHttp();
 
-    const _apiBase = "http://localhost:3001/specialists";
-    const _apiAppointments = "http://localhost:3001/appointments";
-
     const getSpecialists = async (): Promise<ISpecialist[]> => {
-        const res = await request({ url: _apiBase });
+        const res = await request({ url: _apiSpecialists });
 
         return res;
     };
 
     const getOneSpecialist = async (id: string): Promise<ISpecialist> => {
-        const res = await request({ url: `${_apiBase}/${id}` });
+        const res = await request({ url: `${_apiSpecialists}/${id}` });
 
         return res;
     };
@@ -39,7 +37,7 @@ const useSpecialistService = () => {
         }
 
         return await request({
-            url: _apiBase,
+            url: _apiSpecialists,
             method: "POST",
             body: JSON.stringify(body),
         });
@@ -55,14 +53,14 @@ const useSpecialistService = () => {
         });
 
         return await request({
-            url: `${_apiBase}/${id}`,
+            url: `${_apiSpecialists}/${id}`,
             method: "DELETE",
         });
     };
 
     const editSpecialist = async (id: number, data: ISpecialist): Promise<void> => {
         return await request({
-            url: `${_apiBase}/${id}`,
+            url: `${_apiSpecialists}/${id}`,
             method: "PATCH",
             body: JSON.stringify(data),
         });

@@ -1,23 +1,28 @@
 import { useHttp } from "../hooks/http.hook";
 import storage from "../firebase";
-import { uploadBytes, getDownloadURL, listAll, ref, deleteObject } from "firebase/storage";
+import { _apiAppointments, _apiCustomers } from "../config/api.config";
+import {
+    uploadBytes,
+    getDownloadURL,
+    listAll,
+    ref,
+    deleteObject,
+    UploadResult,
+} from "firebase/storage";
 
 import { ICustomer, IAppointment } from "../shared/interfaces/appointment.interface";
 
 const useCustomerService = () => {
     const { loadingStatus, request } = useHttp();
 
-    const _apiBase = "http://localhost:3001/customers";
-    const _apiAppointments = "http://localhost:3001/appointments";
-
     const getCustomers = async (): Promise<ICustomer[]> => {
-        const res = await request({ url: _apiBase });
+        const res = await request({ url: _apiCustomers });
 
         return res;
     };
 
     const getOneCustomer = async (id: string): Promise<ICustomer> => {
-        const res = await request({ url: `${_apiBase}/${id}` });
+        const res = await request({ url: `${_apiCustomers}/${id}` });
 
         return res;
     };
@@ -36,7 +41,7 @@ const useCustomerService = () => {
         body["avatar"] = "customers/avatar.png";
 
         return await request({
-            url: _apiBase,
+            url: _apiCustomers,
             method: "POST",
             body: JSON.stringify(body),
         });
@@ -52,14 +57,14 @@ const useCustomerService = () => {
         });
 
         return await request({
-            url: `${_apiBase}/${id}`,
+            url: `${_apiCustomers}/${id}`,
             method: "DELETE",
         });
     };
 
     const editCustomer = async (id: number, data: ICustomer): Promise<void> => {
         return await request({
-            url: `${_apiBase}/${id}`,
+            url: `${_apiCustomers}/${id}`,
             method: "PATCH",
             body: JSON.stringify(data),
         });
@@ -87,13 +92,17 @@ const useCustomerService = () => {
         }
     };
 
-    const uploadImage = async (file: File, newFileName: string, phone: number): Promise<any> => {
+    const uploadImage = async (
+        file: File,
+        newFileName: string,
+        phone: number
+    ): Promise<UploadResult> => {
         const storageRef = ref(storage, `customers/${phone}/${newFileName}`);
 
         return await uploadBytes(storageRef, file);
     };
 
-    const getImage = async (url: string): Promise<any> => {
+    const getImage = async (url: string): Promise<string> => {
         const storageRef = ref(storage, `${url}`);
 
         return await getDownloadURL(storageRef);

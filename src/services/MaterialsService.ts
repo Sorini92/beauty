@@ -1,15 +1,12 @@
 import { useHttp } from "../hooks/http.hook";
 import { IMaterial, IAvailableMaterials } from "../shared/interfaces/appointment.interface";
+import { _apiAvailableMaterials, _apiOrder, _apiMaterials } from "../config/api.config";
 
 const useMaterialsService = () => {
     const { loadingStatus, request } = useHttp();
 
-    const _apiBase = "http://localhost:3001/materials";
-    const _apiOrder = "http://localhost:3001/order";
-    const _apiAvailableMaterials = "http://localhost:3001/allmaterials";
-
     const getMaterials = async (): Promise<IMaterial[]> => {
-        const res = await request({ url: _apiBase });
+        const res = await request({ url: _apiMaterials });
 
         return res;
     };
@@ -26,7 +23,7 @@ const useMaterialsService = () => {
             item["date"] = new Date().getTime();
             item["id"] = new Date().getTime() + Math.floor(Math.random() * 1000);
             return request({
-                url: _apiBase,
+                url: _apiMaterials,
                 method: "POST",
                 body: JSON.stringify(item),
             });
